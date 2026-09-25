@@ -1,0 +1,36 @@
+- id: "backend"
+  name: "Backend & languages"
+  line: "java"
+  plain: "I write backend services and know my way around the JVM and Python ecosystems."
+  items:
+    - { name: "Java", level: "daily" }
+    - { name: "Spring Boot", level: "daily" }
+    - { name: "Python", level: "daily" }
+    - { name: "Go", level: "learning" }
+- id: "data"
+  name: "Data & pipelines"
+  line: "python"
+  plain: "I move and shape data, and keep the pipelines that do it honest."
+  items:
+    - { name: "PostgreSQL", level: "daily" }
+    - { name: "Airflow", level: "comfortable" }
+    - { name: "dbt", level: "comfortable" }
+    - { name: "Kafka", level: "comfortable" }
+- id: "platform"
+  name: "Platform & DevOps"
+  line: "devops"
+  plain: "I automate how software gets tested, deployed, and kept running."
+  items:
+    - { name: "Kubernetes", level: "daily" }
+    - { name: "Terraform", level: "daily" }
+    - { name: "GitHub Actions", level: "daily" }
+    - { name: "Prometheus", level: "comfortable" }
+- id: "ai"
+  name: "AI & search"
+  line: "ai"
+  plain: "I build features on top of language models, grounded in real data."
+  items:
+    - { name: "Retrieval-augmented generation", level: "comfortable" }
+    - { name: "Claude / Anthropic API", level: "comfortable" }
+    - { name: "pgvector", level: "comfortable" }
+    - { name: "Fine-tuning", level: "learning" }

@@ -1,0 +1,23 @@
+---
+title: "Grounding an assistant in docs that change weekly"
+summary: "The hard part of a docs assistant isn't the model. It's keeping the index honest."
+date: 2025-06-18
+tags: ["ai", "search"]
+---
+
+The model choice for a retrieval-augmented assistant is rarely the bottleneck. The bottleneck is
+that internal docs change every week, and a stale index answers confidently with last month's
+process.
+
+## Re-index on write, not on a schedule
+
+Instead of a nightly re-index job, the assistant's index updates when a doc is actually saved — a
+webhook from the wiki triggers a re-embed of just that page. The lag between "someone fixed the
+runbook" and "the assistant knows about it" dropped from up to 24 hours to a few seconds.
+
+## Always show the source
+
+Every answer links back to the page it came from. That single decision did more for trust than any
+prompt tweak: support agents check the source before repeating the answer to a customer, which also
+means they catch a wrong or outdated doc immediately, instead of the assistant quietly repeating it
+forever.

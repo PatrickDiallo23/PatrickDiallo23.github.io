@@ -1,0 +1,76 @@
+---
+import '@fontsource-variable/atkinson-hyperlegible-next';
+import '@fontsource-variable/atkinson-hyperlegible-mono';
+import '../styles/tokens.css';
+import { site } from '../config/site';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const { title, description, ogImage, jsonLd, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, site.url).toString();
+const pageTitle = title === site.name ? title : `${title} — ${site.name}`;
+const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImage ?? '/og-default.svg', site.url).toString()} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+
+    <meta name="theme-color" content="#1D4ED8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
+
+    <meta
+      http-equiv="Content-Security-Policy"
+      content={`default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'${
+        site.contact.mode === 'formsubmit' ? ' https://formsubmit.co' : ''
+      }; form-action 'self'${site.contact.mode === 'formsubmit' ? ' https://formsubmit.co' : ''};`}
+    />
+
+    {jsonLdList.map((entry) => (
+      <script type="application/ld+json" set:html={JSON.stringify(entry).replace(/</g, '\\u003c')} />
+    ))}
+
+    <script is:inline>
+      (function () {
+        try {
+          var mode = localStorage.getItem('mode') || 'system';
+          var accent = localStorage.getItem('accent') || 'all';
+          if (mode !== 'system') document.documentElement.setAttribute('data-mode', mode);
+          if (accent !== 'all') document.documentElement.setAttribute('data-accent', accent);
+          var details = localStorage.getItem('show-details');
+          if (details === 'true') document.documentElement.setAttribute('data-details', 'open');
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <slot name="header" />
+    <main id="main">
+      <slot />
+    </main>
+    <slot name="footer" />
+  </body>
+</html>

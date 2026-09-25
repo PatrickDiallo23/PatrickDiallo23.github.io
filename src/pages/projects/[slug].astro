@@ -1,0 +1,62 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { site } from '../../config/site';
+
+export async function getStaticPaths() {
+  const projectsVisible = site.sections.find((s) => s.id === 'projects')?.visible ?? false;
+  if (!projectsVisible) return [];
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={project.data.title} description={project.data.plain}>
+  <Header slot="header" />
+  <article class="project">
+    <nav aria-label="Breadcrumb" class="breadcrumbs">
+      <a href="/">Home</a> / <a href="/#projects">Projects</a> / <span aria-current="page">{project.data.title}</span>
+    </nav>
+    <h1 data-line={project.data.line}>{project.data.title}</h1>
+    <p class="meta">
+      {project.data.category} · {project.data.start}{project.data.end ? `–${project.data.end}` : ' – present'}
+    </p>
+    <p>{project.data.plain}</p>
+    <p class="stack"><strong>Stack:</strong> {project.data.stack.join(', ')}</p>
+    <p class="links">
+      {project.data.repo && <a href={project.data.repo}>Repository</a>}
+      {project.data.live && <a href={project.data.live}>Live</a>}
+    </p>
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .project {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--space-5) var(--space-3);
+  }
+  .breadcrumbs {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+  h1[data-line='java'] { color: var(--line-java); }
+  h1[data-line='python'] { color: var(--line-python); }
+  h1[data-line='devops'] { color: var(--line-devops); }
+  h1[data-line='ai'] { color: var(--line-ai); }
+  .meta, .stack {
+    color: var(--ink-muted);
+  }
+  .links a {
+    margin-right: var(--space-2);
+  }
+</style>

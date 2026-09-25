@@ -1,0 +1,127 @@
+---
+import { getCollection, render } from 'astro:content';
+
+const jobsRaw = await getCollection('experience');
+const jobs = jobsRaw.sort((a, b) => b.data.start.localeCompare(a.data.start));
+
+function formatRange(start: string, end: string | null) {
+  return `${start} — ${end ?? 'present'}`;
+}
+---
+
+<section id="experience" aria-labelledby="experience-heading">
+  <h2 id="experience-heading">Experience</h2>
+  <ol class="transit-line" role="list">
+    {await Promise.all(
+      jobs.map(async (job) => {
+        const { Content } = await render(job);
+        return (
+          <li data-line={job.data.line}>
+            <span class="station-dot" aria-hidden="true"></span>
+            <div class="entry">
+              <div class="entry-head">
+                <h3>
+                  {job.data.role}
+                  {job.data.url ? (
+                    <>
+                      {' '}at{' '}
+                      <a href={job.data.url}>{job.data.company}</a>
+                    </>
+                  ) : (
+                    <> at {job.data.company}</>
+                  )}
+                </h3>
+                <p class="meta">
+                  {formatRange(job.data.start, job.data.end)} · {job.data.location}
+                </p>
+              </div>
+              <p class="plain">{job.data.plain}</p>
+              <ul class="highlights" role="list">
+                {job.data.highlights.map((h) => <li>{h}</li>)}
+              </ul>
+              <details class="tech-details">
+                <summary>Technical details</summary>
+                <p class="stack"><strong>Stack:</strong> {job.data.stack.join(', ')}</p>
+                <div class="body">
+                  <Content />
+                </div>
+              </details>
+            </div>
+          </li>
+        );
+      })
+    )}
+  </ol>
+</section>
+
+<style>
+  section {
+    padding: var(--space-5) var(--space-3);
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+
+  .transit-line {
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    border-left: 3px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .transit-line li {
+    position: relative;
+    padding-left: var(--space-3);
+  }
+
+  .station-dot {
+    position: absolute;
+    left: -9px;
+    top: 0.4rem;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 3px solid var(--rule);
+    background: var(--surface);
+  }
+
+  li[data-line='java'] .station-dot { border-color: var(--line-java); }
+  li[data-line='python'] .station-dot { border-color: var(--line-python); }
+  li[data-line='devops'] .station-dot { border-color: var(--line-devops); }
+  li[data-line='ai'] .station-dot { border-color: var(--line-ai); }
+
+  .entry-head h3 {
+    margin: 0;
+    font-size: var(--text-md);
+  }
+
+  .meta {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+    margin: 0.2rem 0 var(--space-1);
+  }
+
+  .plain {
+    margin: 0 0 var(--space-1);
+  }
+
+  .highlights {
+    margin: 0 0 var(--space-1);
+    padding-left: 1.1rem;
+  }
+
+  .tech-details summary {
+    cursor: pointer;
+    color: var(--accent);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .stack {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+</style>

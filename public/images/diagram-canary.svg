@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400" role="img" aria-label="Diagram of a canary deploy sending a slice of traffic to the new version and comparing metrics before promoting or rolling back">
+  <rect width="800" height="400" fill="#0E1621"/>
+  <text x="400" y="40" fill="#E6EDF5" font-size="22" font-family="sans-serif" text-anchor="middle">Canary deploy flow</text>
+  <rect x="40" y="90" width="180" height="70" rx="8" fill="#152131" stroke="#26364A"/>
+  <text x="130" y="130" fill="#E6EDF5" font-size="16" font-family="sans-serif" text-anchor="middle">Stable v1</text>
+  <rect x="40" y="240" width="180" height="70" rx="8" fill="#152131" stroke="#26364A"/>
+  <text x="130" y="280" fill="#E6EDF5" font-size="16" font-family="sans-serif" text-anchor="middle">Canary v2 (5%)</text>
+  <rect x="320" y="165" width="180" height="70" rx="8" fill="#152131" stroke="#34D399"/>
+  <text x="410" y="200" fill="#34D399" font-size="16" font-family="sans-serif" text-anchor="middle">Compare metrics</text>
+  <rect x="600" y="90" width="160" height="60" rx="8" fill="#152131" stroke="#34D399"/>
+  <text x="680" y="125" fill="#34D399" font-size="15" font-family="sans-serif" text-anchor="middle">Promote</text>
+  <rect x="600" y="250" width="160" height="60" rx="8" fill="#152131" stroke="#FF7A7A"/>
+  <text x="680" y="285" fill="#FF7A7A" font-size="15" font-family="sans-serif" text-anchor="middle">Roll back</text>
+  <path d="M220 125h100M220 275h100M500 200h60M680 195v-45M680 235v15" stroke="#9FB0C3" fill="none" stroke-width="2"/>
+</svg>

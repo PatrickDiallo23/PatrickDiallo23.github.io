@@ -1,0 +1,63 @@
+---
+import { site } from '../config/site';
+const buildDate = new Date().toISOString().slice(0, 10);
+---
+
+<footer>
+  <p>
+    © {new Date().getFullYear()} {site.name} · Last updated {buildDate}
+  </p>
+  <nav aria-label="Footer links">
+    <a href="/blog/">Blog</a>
+    <a href="/cv/">CV</a>
+  </nav>
+</footer>
+
+<button type="button" id="back-to-top" class="back-to-top" aria-label="Back to top" hidden>
+  ↑
+</button>
+
+<style>
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: var(--space-3);
+    max-width: 72rem;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+
+  .back-to-top {
+    position: fixed;
+    bottom: var(--space-3);
+    right: var(--space-3);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    z-index: 30;
+  }
+</style>
+
+<script>
+  const button = document.getElementById('back-to-top');
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      if (button) button.hidden = window.scrollY < window.innerHeight;
+      ticking = false;
+    });
+  });
+  button?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>

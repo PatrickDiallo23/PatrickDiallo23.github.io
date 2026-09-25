@@ -1,0 +1,364 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { readingTime } from '../../lib/readingTime';
+import { similarPosts } from '../../lib/similarPosts';
+import { blogPostingJsonLd, breadcrumbJsonLd } from '../../lib/jsonld';
+import { site } from '../../config/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', (post) => !import.meta.env.PROD || !post.data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+const allPosts = await getCollection('blog', (p) => !import.meta.env.PROD || !p.data.draft);
+const sorted = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const index = sorted.findIndex((p) => p.id === post.id);
+const prev = sorted[index + 1];
+const next = sorted[index - 1];
+
+const similar = similarPosts(
+  { slug: post.id, tags: post.data.tags },
+  sorted.map((p) => ({ slug: p.id, tags: p.data.tags }))
+).map((s) => sorted.find((p) => p.id === s.slug)!);
+
+const minutes = readingTime(post.body ?? '');
+const url = new URL(`/blog/${post.id}/`, site.url).toString();
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.summary}
+  jsonLd={[
+    blogPostingJsonLd({ title: post.data.title, summary: post.data.summary, date: post.data.date, updated: post.data.updated, url }),
+    breadcrumbJsonLd([
+      { name: 'Home', url: site.url },
+      { name: 'Blog', url: new URL('/blog/', site.url).toString() },
+      { name: post.data.title, url },
+    ]),
+  ]}
+>
+  <Header slot="header" />
+
+  <article class="post">
+    <nav aria-label="Breadcrumb" class="breadcrumbs">
+      <a href="/">Home</a> / <a href="/blog/">Blog</a> / <span aria-current="page">{post.data.title}</span>
+    </nav>
+
+    <h1>{post.data.title}</h1>
+    <p class="meta">
+      {post.data.date.toISOString().slice(0, 10)} · {minutes} min read
+      {post.data.tags.map((tag) => (
+        <a href={`/blog/tags/${tag}/`} class="tag">#{tag}</a>
+      ))}
+    </p>
+
+    <button type="button" id="share-button" class="share-button">Share this post</button>
+
+    {toc.length > 0 && (
+      <details class="toc" open>
+        <summary>On this page</summary>
+        <nav aria-label="Table of contents">
+          <ul role="list">
+            {toc.map((h) => (
+              <li style={`margin-left: ${(h.depth - 2) * 1}rem`}>
+                <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </details>
+    )}
+
+    <div class="prose" id="post-content">
+      <Content />
+    </div>
+
+    <nav class="prev-next" aria-label="Post navigation">
+      {prev && <a href={`/blog/${prev.id}/`} rel="prev">← {prev.data.title}</a>}
+      {next && <a href={`/blog/${next.id}/`} rel="next">{next.data.title} →</a>}
+    </nav>
+
+    {similar.length > 0 && (
+      <section aria-labelledby="similar-heading" class="similar">
+        <h2 id="similar-heading">Similar posts</h2>
+        <ul role="list">
+          {similar.map((p) => (
+            <li>
+              <a href={`/blog/${p.id}/`}>{p.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </article>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .post {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--space-5) var(--space-3);
+  }
+
+  .breadcrumbs {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .breadcrumbs a {
+    color: var(--ink-muted);
+  }
+
+  .meta {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tag {
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 0.1rem 0.6rem;
+  }
+
+  .share-button {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    border-radius: var(--radius);
+    padding: 0.5rem 0.9rem;
+    cursor: pointer;
+    min-height: 44px;
+    margin: var(--space-1) 0;
+  }
+
+  .toc {
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: var(--space-1) var(--space-2);
+    margin: var(--space-3) 0;
+    max-width: 24rem;
+  }
+
+  .toc summary {
+    cursor: pointer;
+    font-weight: 700;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-1) 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .toc a[aria-current='true'] {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .prose :global(h2),
+  .prose :global(h3) {
+    scroll-margin-top: 5rem;
+  }
+
+  .prose :global(pre) {
+    padding: var(--space-2);
+    border-radius: var(--radius);
+    overflow-x: auto;
+  }
+
+  .prose :global(.code-block) {
+    position: relative;
+    margin: var(--space-2) 0;
+  }
+
+  .prose :global(.copy-code) {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: var(--text-sm);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    border-radius: 4px;
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+  }
+
+  .prev-next {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin: var(--space-4) 0;
+    flex-wrap: wrap;
+  }
+
+  .similar ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+</style>
+
+<script>
+  // Heading anchors: Astro already assigns slug ids to headings.
+  document.querySelectorAll<HTMLHeadingElement>('.prose h2, .prose h3').forEach((heading) => {
+    if (!heading.id) return;
+    const anchor = document.createElement('a');
+    anchor.href = `#${heading.id}`;
+    anchor.className = 'heading-anchor';
+    anchor.setAttribute('aria-label', `Link to ${heading.textContent}`);
+    anchor.textContent = '#';
+    anchor.style.marginLeft = '0.4em';
+    anchor.style.textDecoration = 'none';
+    heading.appendChild(anchor);
+  });
+
+  // Copy button + language label on every code block.
+  document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    pre.replaceWith(wrapper);
+    wrapper.appendChild(pre);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'copy-code';
+    button.textContent = 'Copy';
+    button.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(code);
+        button.textContent = 'Copied';
+        setTimeout(() => (button.textContent = 'Copy'), 1500);
+      } catch {
+        button.textContent = 'Select & copy';
+      }
+    });
+    wrapper.appendChild(button);
+  });
+
+  // TOC active heading.
+  const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+  const headingEls = tocLinks
+    .map((link) => document.getElementById(link.dataset.tocLink || ''))
+    .filter((el): el is HTMLElement => Boolean(el));
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        tocLinks.forEach((l) => l.removeAttribute('aria-current'));
+        const link = tocLinks.find((l) => l.dataset.tocLink === entry.target.id);
+        link?.setAttribute('aria-current', 'true');
+      }
+    },
+    { rootMargin: '-20% 0px -70% 0px' }
+  );
+  headingEls.forEach((h) => observer.observe(h));
+
+  // Image lightbox: every content image opens a native <dialog> with a download link, closes on Esc.
+  document.querySelectorAll<HTMLImageElement>('.prose img').forEach((img) => {
+    img.style.cursor = 'zoom-in';
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    img.setAttribute('aria-label', `Open larger view of: ${img.alt}`);
+    const dialog = document.createElement('dialog');
+    dialog.className = 'lightbox';
+    const bigImg = document.createElement('img');
+    bigImg.src = img.src;
+    bigImg.alt = img.alt;
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.textContent = 'Close';
+    closeButton.className = 'lightbox-close';
+    const downloadLink = document.createElement('a');
+    downloadLink.href = img.src;
+    downloadLink.download = '';
+    downloadLink.textContent = 'Download image';
+    downloadLink.className = 'lightbox-download';
+    closeButton.addEventListener('click', () => dialog.close());
+    dialog.append(closeButton, bigImg, downloadLink);
+    document.body.appendChild(dialog);
+    const open = () => dialog.showModal();
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open();
+      }
+    });
+  });
+
+  // Share: Web Share API, falling back to copying the link.
+  document.getElementById('share-button')?.addEventListener('click', async () => {
+    const shareData = { title: document.title, url: location.href };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        /* user cancelled or unsupported — fall through to copy */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(location.href);
+      const btn = document.getElementById('share-button');
+      if (btn) {
+        const original = btn.textContent;
+        btn.textContent = 'Link copied';
+        setTimeout(() => (btn.textContent = original), 1500);
+      }
+    } catch {}
+  });
+</script>
+
+<style is:global>
+  dialog.lightbox {
+    border: none;
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    padding: var(--space-2);
+    max-width: min(90vw, 900px);
+  }
+  dialog.lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+  dialog.lightbox img {
+    max-width: 100%;
+    display: block;
+    margin: var(--space-1) 0;
+  }
+  .lightbox-close {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    border-radius: var(--radius);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .lightbox-download {
+    color: var(--accent);
+  }
+</style>

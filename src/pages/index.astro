@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import HeroCareerLine from '../components/HeroCareerLine.astro';
+import SectionAbout from '../components/SectionAbout.astro';
+import SectionSkills from '../components/SectionSkills.astro';
+import SectionExperience from '../components/SectionExperience.astro';
+import SectionProjects from '../components/SectionProjects.astro';
+import SectionEducation from '../components/SectionEducation.astro';
+import SectionBlogPreview from '../components/SectionBlogPreview.astro';
+import SectionContact from '../components/SectionContact.astro';
+import { site } from '../config/site';
+import { personJsonLd } from '../lib/jsonld';
+
+const skillGroups = await getCollection('skills');
+const knowsAbout = skillGroups.flatMap((g) => g.data.items.map((i) => i.name));
+
+const componentMap: Record<string, unknown> = {
+  about: SectionAbout,
+  skills: SectionSkills,
+  experience: SectionExperience,
+  projects: SectionProjects,
+  education: SectionEducation,
+  blog: SectionBlogPreview,
+  contact: SectionContact,
+};
+
+const visibleSections = site.sections.filter((s) => s.visible);
+---
+
+<BaseLayout title={site.name} description={site.tagline} jsonLd={personJsonLd(knowsAbout)}>
+  <Header slot="header" />
+
+  <div class="hero">
+    <h1>{site.name}</h1>
+    <p class="role">{site.role}</p>
+    <p class="tagline">{site.tagline}</p>
+    <HeroCareerLine />
+    <div class="hero-actions">
+      <a href={site.cv.file} download={site.cv.downloadName} class="button primary">Download CV</a>
+      <a href="#contact" class="button ghost">Get in touch</a>
+    </div>
+  </div>
+
+  {visibleSections.map((section) => {
+    const Comp = componentMap[section.id] as any;
+    return Comp ? <Comp /> : null;
+  })}
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .hero {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-3) var(--space-4);
+  }
+
+  .role {
+    color: var(--accent);
+    font-size: var(--text-md);
+    margin: 0.3rem 0;
+  }
+
+  .tagline {
+    color: var(--ink-muted);
+    font-size: var(--text-md);
+    max-width: var(--measure);
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-top: var(--space-3);
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .button.primary {
+    background: var(--accent);
+    color: var(--surface);
+  }
+
+  .button.ghost {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../config/site';
+
+const jobs = (await getCollection('experience')).sort((a, b) => b.data.start.localeCompare(a.data.start));
+const education = (await getCollection('education')).sort((a, b) => b.data.end.localeCompare(a.data.end));
+const certifications = (await getCollection('certifications')).sort((a, b) => b.data.issued.localeCompare(a.data.issued));
+const skillGroups = await getCollection('skills');
+
+function formatRange(start: string, end: string | null | undefined) {
+  return `${start} — ${end ?? 'present'}`;
+}
+---
+
+<BaseLayout title="CV" description={`Printable CV for ${site.name}, ${site.role}.`}>
+  <Header slot="header" />
+  <div class="cv">
+    <div class="cv-actions no-print">
+      <a href={site.cv.file} download={site.cv.downloadName} class="button">Download PDF</a>
+    </div>
+
+    <h1>{site.name}</h1>
+    <p class="role">{site.role} · {site.location}</p>
+    <p>{site.tagline}</p>
+
+    <h2>Experience</h2>
+    {jobs.map((job) => (
+      <div class="entry">
+        <h3>{job.data.role} — {job.data.company}</h3>
+        <p class="meta">{formatRange(job.data.start, job.data.end)} · {job.data.location}</p>
+        <p>{job.data.plain}</p>
+        <ul>{job.data.highlights.map((h) => <li>{h}</li>)}</ul>
+      </div>
+    ))}
+
+    <h2>Skills</h2>
+    {skillGroups.map((group) => (
+      <p><strong>{group.data.name}:</strong> {group.data.items.map((i) => i.name).join(', ')}</p>
+    ))}
+
+    <h2>Education</h2>
+    {education.map((e) => (
+      <p><strong>{e.data.degree}</strong> — {e.data.school} ({e.data.start}–{e.data.end})</p>
+    ))}
+
+    <h2>Certifications</h2>
+    {certifications.map((c) => (
+      <p><strong>{c.data.name}</strong> — {c.data.issuer} ({c.data.issued})</p>
+    ))}
+  </div>
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .cv {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: var(--space-5) var(--space-3);
+  }
+  .cv-actions {
+    margin-bottom: var(--space-3);
+  }
+  .button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: var(--radius);
+    text-decoration: none;
+  }
+  .entry {
+    margin-bottom: var(--space-3);
+  }
+  .meta {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+  @media print {
+    .cv {
+      max-width: none;
+    }
+  }
+</style>

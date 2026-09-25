@@ -1,0 +1,115 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { readingTime } from '../../lib/readingTime';
+import { site } from '../../config/site';
+
+const allPosts = await getCollection('blog', (post) => !import.meta.env.PROD || !post.data.draft);
+const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
+---
+
+<BaseLayout title="Blog" description={`Posts by ${site.name} on backend engineering, data pipelines, DevOps, and AI.`}>
+  <Header slot="header" />
+
+  <div class="blog-index">
+    <h1>Blog</h1>
+
+    <div class="filters" role="group" aria-label="Filter posts by tag">
+      <button type="button" class="chip" data-tag="all" aria-pressed="true">All</button>
+      {tags.map((tag) => (
+        <button type="button" class="chip" data-tag={tag} aria-pressed="false">
+          {tag}
+        </button>
+      ))}
+    </div>
+
+    <ul class="posts" role="list">
+      {posts.map((post) => (
+        <li data-tags={post.data.tags.join(',')}>
+          <a href={`/blog/${post.id}/`}>
+            <h2>{post.data.title}</h2>
+            <p class="meta">
+              {post.data.date.toISOString().slice(0, 10)} · {readingTime(post.body ?? '')} min read
+            </p>
+            <p>{post.data.summary}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .blog-index {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--space-5) var(--space-3);
+  }
+
+  .filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: var(--space-2) 0 var(--space-3);
+  }
+
+  .chip {
+    border: 1px solid var(--rule);
+    background: none;
+    color: var(--ink-muted);
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .chip[aria-pressed='true'] {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .posts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .posts[hidden-empty]::after {
+    content: 'No posts match that tag.';
+  }
+
+  .posts a {
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .meta {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+</style>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.filters .chip');
+  const items = document.querySelectorAll<HTMLLIElement>('.posts li');
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      chips.forEach((c) => c.setAttribute('aria-pressed', 'false'));
+      chip.setAttribute('aria-pressed', 'true');
+      const tag = chip.dataset.tag;
+      items.forEach((item) => {
+        const tags = (item.dataset.tags || '').split(',');
+        item.hidden = tag !== 'all' && !tags.includes(tag || '');
+      });
+    });
+  });
+</script>

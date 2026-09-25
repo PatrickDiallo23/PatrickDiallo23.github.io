@@ -1,0 +1,27 @@
+---
+title: "What a data pipeline test actually needs"
+summary: "Notebooks don't fail loudly. Here's the smallest test setup that makes them fail loudly."
+date: 2024-11-02
+tags: ["python", "data", "testing"]
+---
+
+A pipeline that runs in a notebook has no test suite by definition — the "test" is someone rerunning
+the cells and eyeballing the output. That works until the input data shifts shape and nobody notices
+for three weeks.
+
+## Three checks, not thirty
+
+You don't need a full data-quality framework to catch the failures that actually happen:
+
+- **Schema check**: the columns you depend on exist and have the type you expect.
+- **Row-count sanity**: today's row count isn't wildly different from the trailing 7-day average.
+- **Null-rate check**: a column that's normally 99% populated didn't just drop to 40%.
+
+Each one is a five-line function. Running all three before a pipeline writes its output catches the
+overwhelming majority of "why does the dashboard look wrong" incidents, for a fraction of the effort
+of a general-purpose validation framework.
+
+## Where they run
+
+Put them at the boundary — right before a pipeline writes to a table other people read from. That's
+the one place a failure is cheap: nothing downstream has consumed the bad data yet.

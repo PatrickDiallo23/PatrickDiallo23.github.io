@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { readingTime } from '../../../lib/readingTime';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', (post) => !import.meta.env.PROD || !post.data.draft);
+  const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { posts: posts.filter((p) => p.data.tags.includes(tag)) },
+  }));
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+const sorted = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title={`Posts tagged “${tag}”`} description={`${sorted.length} post(s) tagged ${tag}.`}>
+  <Header slot="header" />
+  <div class="tag-page">
+    <nav aria-label="Breadcrumb" class="breadcrumbs">
+      <a href="/">Home</a> / <a href="/blog/">Blog</a> / <span aria-current="page">#{tag}</span>
+    </nav>
+    <h1>Posts tagged “{tag}”</h1>
+    <ul role="list">
+      {sorted.map((post) => (
+        <li>
+          <a href={`/blog/${post.id}/`}>
+            <h2>{post.data.title}</h2>
+            <p class="meta">
+              {post.data.date.toISOString().slice(0, 10)} · {readingTime(post.body ?? '')} min read
+            </p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .tag-page {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--space-5) var(--space-3);
+  }
+  .breadcrumbs {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  a {
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .meta {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+</style>

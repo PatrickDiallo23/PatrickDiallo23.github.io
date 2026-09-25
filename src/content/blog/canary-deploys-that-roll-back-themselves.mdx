@@ -1,0 +1,33 @@
+---
+title: "Canary deploys that roll back themselves"
+summary: "How a small error-budget check turned our worst deploy days into a non-event."
+date: 2025-03-10
+tags: ["devops", "kubernetes", "reliability"]
+---
+
+Every deploy used to mean someone watching a dashboard for twenty minutes, ready to run `kubectl
+rollout undo` by hand. The fix wasn't a bigger dashboard — it was making the rollback decision
+automatic.
+
+![Diagram of a canary deploy sending a slice of traffic to the new version and comparing metrics before promoting or rolling back](/images/diagram-canary.svg)
+
+## The check
+
+The canary gets a fixed slice of traffic. After a warm-up window, a small job compares its error
+rate and p99 latency against the stable version's baseline:
+
+```ts
+function shouldPromote(canary: Metrics, baseline: Metrics): boolean {
+  const errorBudgetOk = canary.errorRate <= baseline.errorRate * 1.5;
+  const latencyBudgetOk = canary.p99Ms <= baseline.p99Ms * 1.2;
+  return errorBudgetOk && latencyBudgetOk;
+}
+```
+
+If `shouldPromote` returns `false`, the pipeline rolls the canary back and posts the metrics that
+tripped it to Slack — no one has to decide anything at 6am.
+
+## What changed
+
+Deploys stopped being an event. The team ships smaller changes more often, because a bad one costs
+five minutes of canary traffic instead of an incident.

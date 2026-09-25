@@ -1,0 +1,102 @@
+---
+import { getCollection } from 'astro:content';
+
+const education = (await getCollection('education')).sort((a, b) => b.data.end.localeCompare(a.data.end));
+const certifications = (await getCollection('certifications')).sort((a, b) =>
+  b.data.issued.localeCompare(a.data.issued)
+);
+const today = new Date().toISOString().slice(0, 7);
+---
+
+<section id="education" aria-labelledby="education-heading">
+  <h2 id="education-heading">Education & certifications</h2>
+  <div class="lists">
+    <div>
+      <h3>Education</h3>
+      <ul role="list">
+        {education.map((e) => (
+          <li>
+            <strong>{e.data.degree}</strong>
+            <span class="meta">{e.data.school} · {e.data.start}–{e.data.end}</span>
+            {e.data.notes && <p class="notes">{e.data.notes}</p>}
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h3>Certifications</h3>
+      <ul role="list">
+        {certifications.map((c) => {
+          const expired = c.data.expires ? c.data.expires < today : false;
+          return (
+            <li>
+              <strong>{c.data.name}</strong>
+              <span class="meta">
+                {c.data.issuer} · issued {c.data.issued}
+                {c.data.expires && <> · {expired ? 'expired' : 'expires'} {c.data.expires}</>}
+              </span>
+              {c.data.url && (
+                <a href={c.data.url} class="credential">
+                  See credential{expired ? ' (expired)' : ''}
+                </a>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  section {
+    padding: var(--space-5) var(--space-3);
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+
+  .lists {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+  }
+
+  ul {
+    list-style: none;
+    margin: var(--space-1) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  li {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: var(--space-1);
+  }
+
+  .meta {
+    display: block;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+
+  .notes {
+    margin: 0.2rem 0 0;
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+
+  .credential {
+    display: inline-block;
+    margin-top: 0.2rem;
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 640px) {
+    .lists {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

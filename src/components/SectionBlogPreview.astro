@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import { readingTime } from '../lib/readingTime';
+
+const isProd = import.meta.env.PROD;
+const allPosts = await getCollection('blog', (post) => !isProd || !post.data.draft);
+const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3);
+---
+
+<section id="blog" aria-labelledby="blog-heading">
+  <h2 id="blog-heading">Blog</h2>
+  <ul class="posts" role="list">
+    {posts.map((post) => (
+      <li>
+        <a href={`/blog/${post.id}/`}>
+          <h3>{post.data.title}</h3>
+          <p class="meta">
+            {post.data.date.toISOString().slice(0, 10)} · {readingTime(post.body ?? '')} min read
+          </p>
+          <p>{post.data.summary}</p>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <a href="/blog/" class="view-all">View all posts</a>
+</section>
+
+<style>
+  section {
+    padding: var(--space-5) var(--space-3);
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+
+  .posts {
+    list-style: none;
+    margin: var(--space-3) 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .posts a {
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .posts h3 {
+    margin: 0;
+    font-size: var(--text-md);
+  }
+
+  .meta {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+    margin: 0.2rem 0;
+  }
+
+  .view-all {
+    color: var(--accent);
+  }
+</style>

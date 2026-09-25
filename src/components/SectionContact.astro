@@ -1,0 +1,213 @@
+---
+import { site } from '../config/site';
+
+const { mode, email, formsubmitId, replyTime } = site.contact;
+---
+
+<section id="contact" aria-labelledby="contact-heading">
+  <h2 id="contact-heading">Contact</h2>
+  <p>{replyTime}</p>
+
+  <div class="email-row">
+    <span>{email}</span>
+    <button type="button" id="copy-email" data-email={email}>Copy email</button>
+    <a href={`mailto:${email}`}>Email me directly</a>
+  </div>
+  <p id="copy-status" role="status" aria-live="polite" class="visually-hidden"></p>
+
+  {mode !== 'links' && (
+    <form
+      id="contact-form"
+      data-mode={mode}
+      data-email={email}
+      action={mode === 'formsubmit' && formsubmitId ? `https://formsubmit.co/${formsubmitId}` : `mailto:${email}`}
+      method="POST"
+    >
+      <div class="field">
+        <label for="name">Name <span aria-hidden="true">*</span></label>
+        <input id="name" name="name" type="text" required />
+      </div>
+      <div class="field">
+        <label for="subject">Subject</label>
+        <input id="subject" name="subject" type="text" />
+      </div>
+      <div class="field">
+        <label for="message">Message <span aria-hidden="true">*</span></label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+      </div>
+      {mode === 'formsubmit' && (
+        <>
+          <input type="text" name="_honey" class="visually-hidden" tabindex="-1" autocomplete="off" />
+          <input type="hidden" name="_subject" value={`New message from ${site.name}'s site`} />
+          <input type="hidden" name="_template" value="table" />
+        </>
+      )}
+      <button type="submit">Send message</button>
+      <p id="form-status" role="status" aria-live="polite"></p>
+      {mode === 'mailto' && (
+        <p class="hint">Your email app should open with the message ready. Nothing opened? Copy my email instead.</p>
+      )}
+    </form>
+  )}
+
+  {site.socials.length > 0 && (
+    <ul class="socials" role="list">
+      {site.socials.map((s) => (
+        <li>
+          <a href={s.url}>{s.platform}</a>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <a href={site.cv.file} download={site.cv.downloadName} class="cv-link-again">
+    Download CV ({site.cv.downloadName})
+  </a>
+</section>
+
+<style>
+  section {
+    padding: var(--space-5) var(--space-3);
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+
+  .email-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin: var(--space-2) 0;
+  }
+
+  .email-row button {
+    border: 1px solid var(--rule);
+    background: none;
+    color: var(--ink);
+    border-radius: var(--radius);
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  form {
+    max-width: 34rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  label {
+    font-size: var(--text-sm);
+  }
+
+  input, textarea {
+    font: inherit;
+    padding: 0.6rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 44px;
+  }
+
+  button[type='submit'] {
+    align-self: flex-start;
+    background: var(--accent);
+    color: var(--surface);
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .hint, #form-status {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+
+  .socials {
+    list-style: none;
+    display: flex;
+    gap: var(--space-2);
+    padding: 0;
+    margin: var(--space-3) 0;
+  }
+
+  .socials a {
+    text-transform: capitalize;
+  }
+
+  .cv-link-again {
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  const copyButton = document.getElementById('copy-email');
+  const status = document.getElementById('copy-status');
+  copyButton?.addEventListener('click', async () => {
+    const email = copyButton.getAttribute('data-email') ?? '';
+    try {
+      await navigator.clipboard.writeText(email);
+      if (status) status.textContent = 'Email copied';
+    } catch {
+      if (status) status.textContent = 'Could not copy — select and copy the email manually.';
+    }
+  });
+
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const formStatus = document.getElementById('form-status');
+
+  function buildMailto(email: string, name: string, subject: string, message: string) {
+    const s = encodeURIComponent(subject || `Message from ${name}`);
+    const b = encodeURIComponent(`${message}\n\n— ${name}`);
+    return `mailto:${email}?subject=${s}&body=${b}`;
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    const mode = form.dataset.mode;
+    const name = (form.elements.namedItem('name') as HTMLInputElement)?.value ?? '';
+    const subject = (form.elements.namedItem('subject') as HTMLInputElement)?.value ?? '';
+    const message = (form.elements.namedItem('message') as HTMLTextAreaElement)?.value ?? '';
+
+    if (mode === 'mailto') {
+      e.preventDefault();
+      const email = form.dataset.email ?? '';
+      const url = buildMailto(email, name, subject, message);
+      if (url.length > 1900 && formStatus) {
+        formStatus.textContent = 'That message is long for an email link — trim it a little, or copy my email instead.';
+        return;
+      }
+      window.location.href = url;
+      if (formStatus) formStatus.textContent = 'Your email app should open with the message ready.';
+    } else if (mode === 'formsubmit') {
+      e.preventDefault();
+      if (formStatus) formStatus.textContent = 'Sending…';
+      try {
+        const res = await fetch(form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/'), {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new FormData(form),
+        });
+        if (res.ok) {
+          if (formStatus) formStatus.textContent = 'Message sent. I usually reply within 2 working days.';
+          form.reset();
+        } else {
+          throw new Error('bad response');
+        }
+      } catch {
+        if (formStatus)
+          formStatus.textContent = 'Something went wrong sending that. Please email me directly instead.';
+      }
+    }
+  });
+</script>

@@ -1,0 +1,78 @@
+---
+import { getCollection } from 'astro:content';
+
+const groups = await getCollection('skills');
+const levelLabel = { daily: 'Daily', comfortable: 'Comfortable', learning: 'Learning' } as const;
+---
+
+<section id="skills" aria-labelledby="skills-heading">
+  <h2 id="skills-heading">Skills</h2>
+  <div class="groups">
+    {groups.map((group) => (
+      <div class="group">
+        <h3 data-line={group.data.line}>{group.data.name}</h3>
+        <p class="plain">{group.data.plain}</p>
+        <ul role="list" class="items">
+          {group.data.items.map((item) => (
+            <li>
+              <span>{item.name}</span>
+              <span class="level">{levelLabel[item.level]}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  section {
+    padding: var(--space-5) var(--space-3);
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+  }
+
+  h3[data-line='java'] { color: var(--line-java); }
+  h3[data-line='python'] { color: var(--line-python); }
+  h3[data-line='devops'] { color: var(--line-devops); }
+  h3[data-line='ai'] { color: var(--line-ai); }
+
+  .plain {
+    color: var(--ink-muted);
+    margin: 0.3rem 0 var(--space-1);
+  }
+
+  .items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .items li {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--rule);
+    padding: 0.3rem 0;
+  }
+
+  .level {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 640px) {
+    .groups {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

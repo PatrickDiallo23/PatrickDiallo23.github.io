@@ -1,0 +1,428 @@
+---
+import { site } from '../config/site';
+
+const visibleSections = site.sections.filter((s) => s.visible);
+---
+
+<header class="station-header">
+  <div class="row">
+    <a href="/" class="name">{site.name}</a>
+
+    <nav aria-label="Section navigation" class="station-nav">
+      <ol class="track" role="list">
+        {visibleSections.map((section) => (
+          <li>
+            <a href={`#${section.id}`} data-station={section.id}>
+              <span class="dot" aria-hidden="true"></span>
+              <span class="label">{section.title}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+      <div class="fill" aria-hidden="true"></div>
+    </nav>
+
+    <div class="current-section" aria-live="polite"></div>
+
+    <div class="actions">
+      <button
+        type="button"
+        id="details-toggle"
+        class="ghost-button"
+        aria-pressed="false"
+      >
+        Show technical details
+      </button>
+      <div class="theme-menu">
+        <button
+          type="button"
+          id="theme-menu-button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="theme-menu-panel"
+        >
+          <span class="visually-hidden">Theme and accent</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6" />
+            <path
+              d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+        <div id="theme-menu-panel" role="menu" hidden>
+          <p class="menu-heading">Mode</p>
+          <button type="button" role="menuitemradio" data-mode="light">Light</button>
+          <button type="button" role="menuitemradio" data-mode="dark">Dark</button>
+          <button type="button" role="menuitemradio" data-mode="system">System</button>
+          <p class="menu-heading">Accent</p>
+          <button type="button" role="menuitemradio" data-accent="all">All lines</button>
+          <button type="button" role="menuitemradio" data-accent="java">Java</button>
+          <button type="button" role="menuitemradio" data-accent="python">Python</button>
+          <button type="button" role="menuitemradio" data-accent="devops">DevOps</button>
+          <button type="button" role="menuitemradio" data-accent="ai">AI</button>
+        </div>
+      </div>
+      <a href={site.cv.file} download={site.cv.downloadName} class="cv-link">CV</a>
+    </div>
+  </div>
+
+  <div class="mobile-bar" aria-hidden="true">
+    <span class="mobile-current"></span>
+  </div>
+</header>
+
+<style>
+  .station-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .row {
+    max-width: 72rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-1) var(--space-3);
+  }
+
+  .name {
+    font-weight: 750;
+    text-decoration: none;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+
+  .station-nav {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .track {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .track li {
+    flex: 1;
+    text-align: center;
+  }
+
+  .track a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    text-decoration: none;
+    color: var(--ink-muted);
+    padding: 0.4rem;
+    min-height: 44px;
+    font-size: var(--text-sm);
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--ink-muted);
+    background: var(--surface);
+    display: inline-block;
+  }
+
+  .track a[aria-current='true'] {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .track a[aria-current='true'] .dot,
+  .track a.visited .dot {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .fill {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 2px;
+    width: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.15s linear;
+  }
+
+  .current-section {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    white-space: nowrap;
+    display: none;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    flex-shrink: 0;
+  }
+
+  .ghost-button {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    border-radius: var(--radius);
+    padding: 0.5rem 0.75rem;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .ghost-button[aria-pressed='true'] {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .theme-menu {
+    position: relative;
+  }
+
+  #theme-menu-button {
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    border-radius: var(--radius);
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  #theme-menu-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: var(--space-1);
+    min-width: 12rem;
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.25);
+  }
+
+  .menu-heading {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    margin: 0.5rem 0.25rem 0.25rem;
+  }
+
+  #theme-menu-panel button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--ink);
+    padding: 0.5rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    min-height: 40px;
+  }
+
+  #theme-menu-panel button:hover {
+    background: var(--bg);
+  }
+
+  #theme-menu-panel button[aria-checked='true'] {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .cv-link {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    border-radius: var(--radius);
+    padding: 0.5rem 0.9rem;
+    font-size: var(--text-sm);
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .mobile-bar {
+    display: none;
+  }
+
+  @media (max-width: 720px) {
+    .track .label {
+      display: none;
+    }
+
+    .ghost-button .label-text {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const track = document.querySelector<HTMLElement>('.station-nav .track');
+  const fill = document.querySelector<HTMLElement>('.station-nav .fill');
+  const currentLabel = document.querySelector<HTMLElement>('.current-section');
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.track a'));
+  const sections = links
+    .map((link) => document.getElementById(link.dataset.station || ''))
+    .filter((el): el is HTMLElement => Boolean(el));
+
+  function updateProgress() {
+    if (!track || !fill || sections.length === 0) return;
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop / Math.max(1, doc.scrollHeight - window.innerHeight);
+    fill.style.transform = `scaleX(${Math.min(1, Math.max(0, scrolled))})`;
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      updateProgress();
+      ticking = false;
+    });
+  });
+  updateProgress();
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const id = entry.target.id;
+        const link = links.find((l) => l.dataset.station === id);
+        if (!link) continue;
+        if (entry.isIntersecting) {
+          links.forEach((l) => l.removeAttribute('aria-current'));
+          link.setAttribute('aria-current', 'true');
+          link.classList.add('visited');
+          if (currentLabel) currentLabel.textContent = link.querySelector('.label')?.textContent ?? '';
+          const mobileCurrent = document.querySelector('.mobile-current');
+          if (mobileCurrent) mobileCurrent.textContent = link.querySelector('.label')?.textContent ?? '';
+        }
+      }
+    },
+    { rootMargin: '-45% 0px -45% 0px' }
+  );
+  sections.forEach((s) => observer.observe(s));
+
+  // Details toggle: persisted, opens/closes every <details class="tech-details">.
+  const detailsToggle = document.getElementById('details-toggle');
+  function applyDetailsState(open: boolean) {
+    document.documentElement.setAttribute('data-details', open ? 'open' : 'closed');
+    document.querySelectorAll<HTMLDetailsElement>('.tech-details').forEach((d) => {
+      d.open = open;
+    });
+    detailsToggle?.setAttribute('aria-pressed', String(open));
+  }
+  const storedDetails = (() => {
+    try {
+      return localStorage.getItem('show-details') === 'true';
+    } catch {
+      return false;
+    }
+  })();
+  applyDetailsState(storedDetails);
+  detailsToggle?.addEventListener('click', () => {
+    const next = detailsToggle.getAttribute('aria-pressed') !== 'true';
+    applyDetailsState(next);
+    try {
+      localStorage.setItem('show-details', String(next));
+    } catch {}
+  });
+
+  // Theme/accent menu.
+  const menuButton = document.getElementById('theme-menu-button');
+  const menuPanel = document.getElementById('theme-menu-panel');
+  const root = document.documentElement;
+
+  function setChecked(value: string, attr: 'data-mode' | 'data-accent') {
+    menuPanel?.querySelectorAll(`[${attr}]`).forEach((btn) => {
+      btn.setAttribute('aria-checked', String(btn.getAttribute(attr) === value));
+    });
+  }
+
+  function currentMode() {
+    return root.getAttribute('data-mode') || 'system';
+  }
+  function currentAccent() {
+    return root.getAttribute('data-accent') || 'all';
+  }
+  setChecked(currentMode(), 'data-mode');
+  setChecked(currentAccent(), 'data-accent');
+
+  menuButton?.addEventListener('click', () => {
+    const open = menuPanel?.hasAttribute('hidden');
+    if (open) {
+      menuPanel?.removeAttribute('hidden');
+      menuButton.setAttribute('aria-expanded', 'true');
+    } else {
+      menuPanel?.setAttribute('hidden', '');
+      menuButton.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!menuPanel || menuPanel.hasAttribute('hidden')) return;
+    if (e.target instanceof Node && !menuPanel.contains(e.target) && e.target !== menuButton) {
+      menuPanel.setAttribute('hidden', '');
+      menuButton?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menuPanel && !menuPanel.hasAttribute('hidden')) {
+      menuPanel.setAttribute('hidden', '');
+      menuButton?.setAttribute('aria-expanded', 'false');
+      (menuButton as HTMLElement)?.focus();
+    }
+  });
+
+  menuPanel?.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.mode!;
+      if (mode === 'system') root.removeAttribute('data-mode');
+      else root.setAttribute('data-mode', mode);
+      try {
+        localStorage.setItem('mode', mode);
+      } catch {}
+      setChecked(mode, 'data-mode');
+      revealTransition();
+    });
+  });
+
+  menuPanel?.querySelectorAll<HTMLButtonElement>('[data-accent]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const accent = btn.dataset.accent!;
+      if (accent === 'all') root.removeAttribute('data-accent');
+      else root.setAttribute('data-accent', accent);
+      try {
+        localStorage.setItem('accent', accent);
+      } catch {}
+      setChecked(accent, 'data-accent');
+    });
+  });
+
+  function revealTransition() {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('startViewTransition' in document)) return;
+    (document as Document & { startViewTransition: (cb: () => void) => void }).startViewTransition(() => {});
+  }
+</script>

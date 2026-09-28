@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import HeroCareerLine from '../components/HeroCareerLine.astro';
 import SectionAbout from '../components/SectionAbout.astro';
 import SectionSkills from '../components/SectionSkills.astro';
 import SectionExperience from '../components/SectionExperience.astro';
@@ -28,6 +27,15 @@ const componentMap: Record<string, unknown> = {
 };
 
 const visibleSections = site.sections.filter((s) => s.visible);
+
+// Rows still holding a TODO placeholder stay hidden until filled in site.ts.
+const filled = (v: string) => v && !v.startsWith('TODO');
+const { building, learning, reading } = site.currently;
+const currently = [
+  filled(building) && { label: 'Building', text: building },
+  filled(learning) && { label: 'Learning', text: learning },
+  filled(reading.title) && { label: 'Reading', text: reading.title, url: reading.url },
+].filter(Boolean) as { label: string; text: string; url?: string }[];
 ---
 
 <BaseLayout title={site.name} description={site.tagline} jsonLd={personJsonLd(knowsAbout)}>
@@ -36,8 +44,33 @@ const visibleSections = site.sections.filter((s) => s.visible);
   <div class="hero">
     <h1>{site.name}</h1>
     <p class="role">{site.role}</p>
-    <p class="tagline">{site.tagline}</p>
-    <HeroCareerLine />
+    {site.motto && (
+      <figure class="motto">
+        <blockquote><p>{site.motto}</p></blockquote>
+        <figcaption>my way of living</figcaption>
+      </figure>
+    )}
+
+    {site.interests.length > 0 && (
+      <ul class="interests" role="list" aria-label="Interests">
+        {site.interests.map((topic) => <li>{topic}</li>)}
+      </ul>
+    )}
+
+    {currently.length > 0 && (
+      <div class="currently">
+        <p class="currently-title">Currently</p>
+        <dl>
+          {currently.map((row) => (
+            <div>
+              <dt>{row.label}</dt>
+              <dd>{row.url ? <a href={row.url}>{row.text}</a> : row.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    )}
+
     <div class="hero-actions">
       <a href={site.cv.file} download={site.cv.downloadName} class="button primary">Download CV</a>
       <a href="#contact" class="button ghost">Get in touch</a>
@@ -56,26 +89,146 @@ const visibleSections = site.sections.filter((s) => s.visible);
   .hero {
     max-width: 72rem;
     margin: 0 auto;
-    padding: var(--space-6) var(--space-3) var(--space-4);
+    padding: clamp(var(--space-4), 8vw, var(--space-6)) var(--gutter) var(--space-5);
+  }
+
+  h1 {
+    margin: 0;
   }
 
   .role {
     color: var(--accent);
     font-size: var(--text-md);
-    margin: 0.3rem 0;
+    font-weight: 700;
+    margin: var(--space-1) 0 0;
+  }
+
+  /* Motto: italic display face between two fading hairlines. */
+  .motto {
+    margin: var(--space-4) 0;
+    max-width: 34rem;
+    text-align: center;
+  }
+
+  .motto blockquote {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .motto blockquote::before,
+  .motto blockquote::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--ink-muted));
+    opacity: 0.6;
+  }
+
+  .motto blockquote::after {
+    background: linear-gradient(90deg, var(--ink-muted), transparent);
+  }
+
+  .motto p {
+    margin: 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.75rem, 5vw, 2.4rem);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .motto figcaption {
+    margin-top: 0.35rem;
+    font-size: var(--text-sm);
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
   }
 
   .tagline {
     color: var(--ink-muted);
     font-size: var(--text-md);
     max-width: var(--measure);
+    margin: 0 0 var(--space-3);
+  }
+
+  .interests {
+    list-style: none;
+    margin: 0 0 var(--space-3);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .interests li {
+    padding: 0.3rem 0.85rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--rule));
+    background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+    color: var(--ink);
+    border-radius: 999px;
+    font-size: var(--text-sm);
+    font-weight: 700;
+  }
+
+  .currently {
+    max-width: 34rem;
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .currently-title {
+    margin: 0 0 0.35rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-md);
+    color: var(--ink-muted);
+  }
+
+  .currently dl {
+    margin: 0;
+  }
+
+  .currently dl div {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: var(--space-2);
+    padding: 0.3rem 0;
+  }
+
+  .currently dt {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--ink-muted);
+    padding-top: 0.2rem;
+  }
+
+  .currently dd {
+    margin: 0;
   }
 
   .hero-actions {
     display: flex;
     gap: var(--space-2);
     flex-wrap: wrap;
-    margin-top: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  @media (max-width: 480px) {
+    .currently dl div {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .hero-actions .button {
+      flex: 1 1 100%;
+      justify-content: center;
+    }
   }
 
   .button {

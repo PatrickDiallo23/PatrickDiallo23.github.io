@@ -1,7 +1,7 @@
 ---
 company: "Northwind Labs"
 role: "Senior Engineer, Platform & AI"
-line: "devops"
+tint: "emerald"
 start: "2023-01"
 end: null
 location: "Remote"

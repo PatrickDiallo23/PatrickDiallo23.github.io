@@ -9,8 +9,8 @@ const levelLabel = { daily: 'Daily', comfortable: 'Comfortable', learning: 'Lear
   <h2 id="skills-heading">Skills</h2>
   <div class="groups">
     {groups.map((group) => (
-      <div class="group">
-        <h3 data-line={group.data.line}>{group.data.name}</h3>
+      <div class="group plate" data-tint={group.data.tint}>
+        <h3>{group.data.name}</h3>
         <p class="plain">{group.data.plain}</p>
         <ul role="list" class="items">
           {group.data.items.map((item) => (
@@ -27,22 +27,28 @@ const levelLabel = { daily: 'Daily', comfortable: 'Comfortable', learning: 'Lear
 
 <style>
   section {
-    padding: var(--space-5) var(--space-3);
+    padding: var(--space-5) var(--gutter);
     max-width: 72rem;
     margin: 0 auto;
   }
 
   .groups {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-4);
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
     margin-top: var(--space-3);
   }
 
-  h3[data-line='java'] { color: var(--line-java); }
-  h3[data-line='python'] { color: var(--line-python); }
-  h3[data-line='devops'] { color: var(--line-devops); }
-  h3[data-line='ai'] { color: var(--line-ai); }
+  @media (min-width: 720px) {
+    .groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  h3 {
+    margin: 0;
+    color: var(--tint);
+  }
 
   .plain {
     color: var(--ink-muted);
@@ -61,8 +67,13 @@ const levelLabel = { daily: 'Daily', comfortable: 'Comfortable', learning: 'Lear
   .items li {
     display: flex;
     justify-content: space-between;
+    gap: var(--space-2);
     border-bottom: 1px solid var(--rule);
     padding: 0.3rem 0;
+  }
+
+  .items li:last-child {
+    border-bottom: none;
   }
 
   .level {
@@ -70,9 +81,4 @@ const levelLabel = { daily: 'Daily', comfortable: 'Comfortable', learning: 'Lear
     font-size: var(--text-sm);
   }
 
-  @media (max-width: 640px) {
-    .groups {
-      grid-template-columns: 1fr;
-    }
-  }
 </style>

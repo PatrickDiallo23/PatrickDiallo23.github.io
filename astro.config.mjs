@@ -6,7 +6,22 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://diallofrancispatrick.com',
-  output: 'static',
+  // Content-Security-Policy <meta> on every page. Astro hashes its own inlined
+  // scripts, so no 'unsafe-inline' for scripts. Styles keep 'unsafe-inline'
+  // because Shiki (blog code blocks) writes inline styles.
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        "connect-src 'self' https://formspree.io",
+        "form-action 'self' https://formspree.io",
+        "base-uri 'self'",
+        "object-src 'none'",
+      ],
+      styleDirective: { resources: ["'self'", "'unsafe-inline'"] },
+    },
+  },
   integrations: [
     mdx(),
     sitemap({

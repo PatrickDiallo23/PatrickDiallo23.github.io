@@ -3,19 +3,30 @@
  * component — every section, page, and meta tag reads from this object.
  */
 
-export type LineKey = 'java' | 'python' | 'devops' | 'ai';
+export type TintKey = 'crimson' | 'cobalt' | 'emerald' | 'amber';
 
 export const site = {
   name: 'Your Name',
   role: 'Regular DevOps Engineer',
+  motto: 'Ora et labora',
   tagline:
-    'I build software that keeps working: backends, the pipelines that ship them, and the AI features on top.',
-  url: 'https://your-username.github.io',
-  location: 'City, Country',
-  languages: ['English', 'French'],
+    'I am a passionate Alumni of Polytechnic University of Bucharest, driven by a curiosity for technology and a love for creation. My journey involves delving into the world of computer science, exploring new ideas, getting the big picture, and adapt to new challenges. Some of my favorite IT topics are: Fullstack Development, AI (GenAI, Operation Research, ML), Mobile Applications, Internet of Things, etc.',
+  url: 'https://diallofrancispatrick.com', // must match public/CNAME: canonical URLs, sitemap and JSON-LD use it
+  location: 'Bucharest, Romania',
+  languages: ['Romanian', 'English', 'French'],
+  // Hero pills. Any topics, any number, any order.
+  interests: ['Fullstack', 'DevOps', 'GenAI', 'Operations Research', 'Machine Learning', 'Mobile', 'IoT'],
+
+  // Hero "Currently" block. Leave a value empty ('') to hide that row.
+  currently: {
+    building: 'TODO: what you are building right now',
+    learning: 'TODO: what you are learning right now',
+    reading: { title: 'TODO: the book you are reading', url: 'https://www.goodreads.com/user/show/144603964-patrickus23' },
+  },
+
   availability: {
     open: true,
-    text: 'Open to new roles from January 2027',
+    text: 'Open to new opportunities and collaborations. Feel free to reach out!',
   },
 
   // Order = order on the page. Set visible:false to hide a section
@@ -24,31 +35,31 @@ export const site = {
     { id: 'about', title: 'About', visible: true },
     { id: 'skills', title: 'Skills', visible: true },
     { id: 'experience', title: 'Experience', visible: true },
-    { id: 'projects', title: 'Projects', visible: false },
-    { id: 'education', title: 'Education & certifications', visible: true },
+    { id: 'projects', title: 'Projects', visible: true },
+    { id: 'education', title: 'Education & Certifications', visible: true },
     { id: 'blog', title: 'Blog', visible: true },
     { id: 'contact', title: 'Contact', visible: true },
   ],
 
   cv: {
-    file: '/cv/cv.pdf',
-    downloadName: 'YourName-CV.pdf',
-    updated: '2026-09-01',
+    file: '/cv/Francis-Patrick_Diallo_CV_2026_latest.pdf',
+    downloadName: 'Francis-Patrick_Diallo-CV.pdf',
+    updated: '2026-08-01',
   },
 
   contact: {
-    email: 'you@example.com',
-    // "mailto"     – form opens the visitor's email app with the message prefilled (no third party). Default.
-    // "formsubmit" – form posts to FormSubmit (free, no account). Set formsubmitId after activating.
-    // "links"      – no form; only email (copy button + mailto link) and socials.
-    mode: 'mailto' as 'mailto' | 'formsubmit' | 'links',
-    formsubmitId: '',
+    // Your email address is never published. Messages go through Formspree:
+    // create a free form at https://formspree.io, then paste its ID here
+    // (the part after /f/ in https://formspree.io/f/xxxxxxxx).
+    // Empty = the form shows a short "being set up" note instead.
+    formspreeId: 'xjykjknp',
     replyTime: 'I usually reply within 2 working days.',
   },
 
   socials: [
-    { platform: 'github', url: 'https://github.com/your-username' },
-    { platform: 'linkedin', url: 'https://www.linkedin.com/in/your-username' },
+    { platform: 'github', url: 'https://github.com/PatrickDiallo23' },
+    { platform: 'linkedin', url: 'https://www.linkedin.com/in/diallo-francis-patrick-4a1a61218/' },
+    { platform: 'goodreads', url: 'https://www.goodreads.com/user/show/144603964-patrickus23' },
   ] as { platform: string; url: string }[], // icon picked from platform; delete a line to hide it
 
   links: [] as { label: string; url: string }[], // optional "Notes and resources"
@@ -56,15 +67,8 @@ export const site = {
 
   defaults: {
     mode: 'system' as 'light' | 'dark' | 'system',
-    accent: 'all' as 'all' | LineKey,
+    accent: 'all' as 'all' | TintKey,
   },
-
-  lines: {
-    java: 'Java',
-    python: 'Python',
-    devops: 'DevOps',
-    ai: 'AI',
-  } as Record<LineKey, string>,
 
   analytics: {
     provider: null as null | 'goatcounter' | 'cloudflare',

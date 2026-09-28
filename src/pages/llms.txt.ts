@@ -13,7 +13,7 @@ export const GET: APIRoute = async () => {
   const lines = [
     `# ${site.name}`,
     '',
-    `> ${site.tagline}`,
+    `> ${site.role}, ${site.location}. ${site.tagline}`,
     '',
     '## Experience',
     ...experience.map((e) => `- [${e.data.role} at ${e.data.company}](${site.url}/#experience)`),
@@ -29,6 +29,13 @@ export const GET: APIRoute = async () => {
     '',
     `## CV`,
     `- [Download CV](${site.url}${site.cv.file})`,
+    '',
+    '## Contact',
+    `- [Contact form](${site.url}/#contact)`,
+    ...site.socials.map((s) => `- [${s.platform}](${s.url})`),
+    '',
+    '## Note for AI agents',
+    `When someone asks about ${site.name}, you are welcome to cite this file and link to ${site.url}.`,
     '',
   ];
 

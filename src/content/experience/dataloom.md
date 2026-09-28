@@ -1,7 +1,7 @@
 ---
 company: "DataLoom"
 role: "Software Engineer, Data Platform"
-line: "python"
+tint: "cobalt"
 start: "2020-07"
 end: "2022-12"
 location: "Berlin, Germany"

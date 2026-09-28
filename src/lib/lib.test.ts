@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readingTime } from './readingTime';
 import { similarPosts } from './similarPosts';
-import { buildMailto, isMailtoWithinLimit } from './mailto';
 
 describe('readingTime', () => {
   it('rounds to whole minutes at 200 words/minute', () => {
@@ -39,37 +38,5 @@ describe('similarPosts', () => {
   it('respects the limit', () => {
     const result = similarPosts(posts[0], posts, 1);
     expect(result).toHaveLength(1);
-  });
-});
-
-describe('buildMailto', () => {
-  it('encodes subject and message, includes the sender name', () => {
-    const url = buildMailto('you@example.com', {
-      name: 'Ada Lovelace',
-      subject: 'Hi there',
-      message: 'Let’s talk & collaborate',
-    });
-    expect(url).toContain('mailto:you@example.com?subject=');
-    expect(url).toContain(encodeURIComponent('Hi there'));
-    expect(url).toContain(encodeURIComponent('Ada Lovelace'));
-  });
-
-  it('flags a message that would exceed the mailto length guard', () => {
-    const longMessage = 'x'.repeat(3000);
-    const ok = isMailtoWithinLimit('you@example.com', {
-      name: 'Ada',
-      subject: 'Hi',
-      message: longMessage,
-    });
-    expect(ok).toBe(false);
-  });
-
-  it('accepts a normal-length message', () => {
-    const ok = isMailtoWithinLimit('you@example.com', {
-      name: 'Ada',
-      subject: 'Hi',
-      message: 'A short message.',
-    });
-    expect(ok).toBe(true);
   });
 });

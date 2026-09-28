@@ -1,6 +1,6 @@
 - id: "backend"
   name: "Backend & languages"
-  line: "java"
+  tint: "crimson"
   plain: "I write backend services and know my way around the JVM and Python ecosystems."
   items:
     - { name: "Java", level: "daily" }
@@ -9,7 +9,7 @@
     - { name: "Go", level: "learning" }
 - id: "data"
   name: "Data & pipelines"
-  line: "python"
+  tint: "cobalt"
   plain: "I move and shape data, and keep the pipelines that do it honest."
   items:
     - { name: "PostgreSQL", level: "daily" }
@@ -18,7 +18,7 @@
     - { name: "Kafka", level: "comfortable" }
 - id: "platform"
   name: "Platform & DevOps"
-  line: "devops"
+  tint: "emerald"
   plain: "I automate how software gets tested, deployed, and kept running."
   items:
     - { name: "Kubernetes", level: "daily" }
@@ -27,7 +27,7 @@
     - { name: "Prometheus", level: "comfortable" }
 - id: "ai"
   name: "AI & search"
-  line: "ai"
+  tint: "amber"
   plain: "I build features on top of language models, grounded in real data."
   items:
     - { name: "Retrieval-augmented generation", level: "comfortable" }

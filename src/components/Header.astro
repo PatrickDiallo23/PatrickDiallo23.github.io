@@ -19,10 +19,7 @@ const visibleSections = site.sections.filter((s) => s.visible);
           </li>
         ))}
       </ol>
-      <div class="fill" aria-hidden="true"></div>
     </nav>
-
-    <div class="current-section" aria-live="polite"></div>
 
     <div class="actions">
       <button
@@ -31,7 +28,7 @@ const visibleSections = site.sections.filter((s) => s.visible);
         class="ghost-button"
         aria-pressed="false"
       >
-        Show technical details
+        Show <span class="wide-only">technical </span>details
       </button>
       <div class="theme-menu">
         <button
@@ -58,19 +55,15 @@ const visibleSections = site.sections.filter((s) => s.visible);
           <button type="button" role="menuitemradio" data-mode="dark">Dark</button>
           <button type="button" role="menuitemradio" data-mode="system">System</button>
           <p class="menu-heading">Accent</p>
-          <button type="button" role="menuitemradio" data-accent="all">All lines</button>
-          <button type="button" role="menuitemradio" data-accent="java">Java</button>
-          <button type="button" role="menuitemradio" data-accent="python">Python</button>
-          <button type="button" role="menuitemradio" data-accent="devops">DevOps</button>
-          <button type="button" role="menuitemradio" data-accent="ai">AI</button>
+          <button type="button" role="menuitemradio" data-accent="all">Default</button>
+          <button type="button" role="menuitemradio" data-accent="crimson">Crimson</button>
+          <button type="button" role="menuitemradio" data-accent="cobalt">Cobalt</button>
+          <button type="button" role="menuitemradio" data-accent="emerald">Emerald</button>
+          <button type="button" role="menuitemradio" data-accent="amber">Amber</button>
         </div>
       </div>
       <a href={site.cv.file} download={site.cv.downloadName} class="cv-link">CV</a>
     </div>
-  </div>
-
-  <div class="mobile-bar" aria-hidden="true">
-    <span class="mobile-current"></span>
   </div>
 </header>
 
@@ -94,7 +87,9 @@ const visibleSections = site.sections.filter((s) => s.visible);
   }
 
   .name {
-    font-weight: 750;
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 650;
     text-decoration: none;
     color: var(--ink);
     flex-shrink: 0;
@@ -116,7 +111,7 @@ const visibleSections = site.sections.filter((s) => s.visible);
   }
 
   .track li {
-    flex: 1;
+    flex: 1 1 auto;
     text-align: center;
   }
 
@@ -129,6 +124,7 @@ const visibleSections = site.sections.filter((s) => s.visible);
     padding: 0.4rem;
     min-height: 44px;
     font-size: var(--text-sm);
+    white-space: nowrap;
   }
 
   .dot {
@@ -149,25 +145,6 @@ const visibleSections = site.sections.filter((s) => s.visible);
   .track a.visited .dot {
     background: var(--accent);
     border-color: var(--accent);
-  }
-
-  .fill {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    height: 2px;
-    width: 100%;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.15s linear;
-  }
-
-  .current-section {
-    font-size: var(--text-sm);
-    color: var(--ink-muted);
-    white-space: nowrap;
-    display: none;
   }
 
   .actions {
@@ -207,6 +184,11 @@ const visibleSections = site.sections.filter((s) => s.visible);
     display: grid;
     place-items: center;
     cursor: pointer;
+  }
+
+  /* Clicks on the icon must land on the button itself. */
+  #theme-menu-button svg {
+    pointer-events: none;
   }
 
   #theme-menu-panel {
@@ -261,16 +243,44 @@ const visibleSections = site.sections.filter((s) => s.visible);
     align-items: center;
   }
 
-  .mobile-bar {
-    display: none;
-  }
+  /* Below desktop: name + actions on row one, a swipeable section list on row two. */
+  @media (max-width: 1279px) {
+    .row {
+      flex-wrap: wrap;
+      row-gap: 0;
+      padding: var(--space-1) var(--gutter) 0;
+    }
 
-  @media (max-width: 720px) {
-    .track .label {
+    .name {
+      margin-right: auto;
+    }
+
+    .station-nav {
+      order: 3;
+      flex-basis: 100%;
+      margin: 0 calc(-1 * var(--gutter));
+    }
+
+    .track {
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 0 var(--gutter);
+      gap: var(--space-2);
+      mask-image: linear-gradient(90deg, transparent, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent);
+    }
+
+    .track::-webkit-scrollbar {
       display: none;
     }
 
-    .ghost-button .label-text {
+    .track li {
+      flex: 0 0 auto;
+    }
+
+  }
+
+  @media (max-width: 720px) {
+    .wide-only {
       display: none;
     }
   }
@@ -278,30 +288,10 @@ const visibleSections = site.sections.filter((s) => s.visible);
 
 <script>
   const track = document.querySelector<HTMLElement>('.station-nav .track');
-  const fill = document.querySelector<HTMLElement>('.station-nav .fill');
-  const currentLabel = document.querySelector<HTMLElement>('.current-section');
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.track a'));
   const sections = links
     .map((link) => document.getElementById(link.dataset.station || ''))
     .filter((el): el is HTMLElement => Boolean(el));
-
-  function updateProgress() {
-    if (!track || !fill || sections.length === 0) return;
-    const doc = document.documentElement;
-    const scrolled = doc.scrollTop / Math.max(1, doc.scrollHeight - window.innerHeight);
-    fill.style.transform = `scaleX(${Math.min(1, Math.max(0, scrolled))})`;
-  }
-
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      updateProgress();
-      ticking = false;
-    });
-  });
-  updateProgress();
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -313,9 +303,10 @@ const visibleSections = site.sections.filter((s) => s.visible);
           links.forEach((l) => l.removeAttribute('aria-current'));
           link.setAttribute('aria-current', 'true');
           link.classList.add('visited');
-          if (currentLabel) currentLabel.textContent = link.querySelector('.label')?.textContent ?? '';
-          const mobileCurrent = document.querySelector('.mobile-current');
-          if (mobileCurrent) mobileCurrent.textContent = link.querySelector('.label')?.textContent ?? '';
+          // Phones: keep the active section visible in the swipeable list.
+          if (track && track.scrollWidth > track.clientWidth) {
+            track.scrollTo({ left: link.offsetLeft - track.clientWidth / 2 + link.offsetWidth / 2, behavior: 'smooth' });
+          }
         }
       }
     },
@@ -381,7 +372,8 @@ const visibleSections = site.sections.filter((s) => s.visible);
 
   document.addEventListener('click', (e) => {
     if (!menuPanel || menuPanel.hasAttribute('hidden')) return;
-    if (e.target instanceof Node && !menuPanel.contains(e.target) && e.target !== menuButton) {
+    // contains(): a click on the icon inside the button must not count as "outside".
+    if (e.target instanceof Node && !menuPanel.contains(e.target) && !menuButton?.contains(e.target)) {
       menuPanel.setAttribute('hidden', '');
       menuButton?.setAttribute('aria-expanded', 'false');
     }

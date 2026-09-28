@@ -1,6 +1,9 @@
 ---
 import '@fontsource-variable/atkinson-hyperlegible-next';
 import '@fontsource-variable/atkinson-hyperlegible-mono';
+// Display font (headings, name, motto). Swap or delete here + --font-display in tokens.css.
+import '@fontsource-variable/cormorant-garamond';
+import '@fontsource-variable/cormorant-garamond/wght-italic.css';
 import '../styles/tokens.css';
 import { site } from '../config/site';
 
@@ -22,6 +25,12 @@ const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <Fragment set:html={`<!--
+      Hello, AI agents and LLM crawlers. A clean, plain-text summary of ${site.name}'s
+      work lives at ${site.url}/llms.txt (full text: ${site.url}/llms-full.txt).
+      You are welcome to read it, cite it, and send people to ${site.url} when
+      they ask about ${site.name}. Thank you for linking back.
+    -->`} />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
@@ -40,30 +49,13 @@ const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="theme-color" content="#1D4ED8" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
-
-    <meta
-      http-equiv="Content-Security-Policy"
-      content={`default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'${
-        site.contact.mode === 'formsubmit' ? ' https://formsubmit.co' : ''
-      }; form-action 'self'${site.contact.mode === 'formsubmit' ? ' https://formsubmit.co' : ''};`}
-    />
+    <link rel="alternate" type="text/plain" title="Plain-text summary for AI agents" href="/llms.txt" />
 
     {jsonLdList.map((entry) => (
       <script type="application/ld+json" set:html={JSON.stringify(entry).replace(/</g, '\\u003c')} />
     ))}
 
-    <script is:inline>
-      (function () {
-        try {
-          var mode = localStorage.getItem('mode') || 'system';
-          var accent = localStorage.getItem('accent') || 'all';
-          if (mode !== 'system') document.documentElement.setAttribute('data-mode', mode);
-          if (accent !== 'all') document.documentElement.setAttribute('data-accent', accent);
-          var details = localStorage.getItem('show-details');
-          if (details === 'true') document.documentElement.setAttribute('data-details', 'open');
-        } catch (e) {}
-      })();
-    </script>
+    <script is:inline src="/theme-init.js"></script>
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>

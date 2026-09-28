@@ -16,7 +16,7 @@ function formatRange(start: string, end: string | null) {
       jobs.map(async (job) => {
         const { Content } = await render(job);
         return (
-          <li data-line={job.data.line}>
+          <li data-tint={job.data.tint}>
             <span class="station-dot" aria-hidden="true"></span>
             <div class="entry">
               <div class="entry-head">
@@ -56,7 +56,7 @@ function formatRange(start: string, end: string | null) {
 
 <style>
   section {
-    padding: var(--space-5) var(--space-3);
+    padding: var(--space-5) var(--gutter);
     max-width: 72rem;
     margin: 0 auto;
   }
@@ -87,10 +87,7 @@ function formatRange(start: string, end: string | null) {
     background: var(--surface);
   }
 
-  li[data-line='java'] .station-dot { border-color: var(--line-java); }
-  li[data-line='python'] .station-dot { border-color: var(--line-python); }
-  li[data-line='devops'] .station-dot { border-color: var(--line-devops); }
-  li[data-line='ai'] .station-dot { border-color: var(--line-ai); }
+  li[data-tint] .station-dot { border-color: var(--tint); }
 
   .entry-head h3 {
     margin: 0;

@@ -1,7 +1,7 @@
 ---
 company: "Globex Bank"
 role: "Backend Engineer"
-line: "java"
+tint: "crimson"
 start: "2018-03"
 end: "2020-06"
 location: "Remote"

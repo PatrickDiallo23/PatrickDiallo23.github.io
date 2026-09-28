@@ -1,6 +1,6 @@
 ---
 title: "Canary Deploy Toolkit"
-line: "devops"
+tint: "emerald"
 category: "DevOps"
 plain: "A GitHub Action that rolls a deploy out to a small slice of traffic first, then promotes or rolls back on its own."
 stack:

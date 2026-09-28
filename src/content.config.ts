@@ -1,7 +1,8 @@
 import { defineCollection, z } from 'astro:content';
 import { glob, file } from 'astro/loaders';
 
-const lineEnum = z.enum(['java', 'python', 'devops', 'ai']);
+// Category color only. Pick any tint for any group; it carries no other meaning.
+const tintEnum = z.enum(['crimson', 'cobalt', 'emerald', 'amber']);
 const levelEnum = z.enum(['daily', 'comfortable', 'learning']);
 
 const experience = defineCollection({
@@ -9,7 +10,7 @@ const experience = defineCollection({
   schema: z.object({
     company: z.string(),
     role: z.string(),
-    line: lineEnum,
+    tint: tintEnum,
     start: z.string().regex(/^\d{4}-\d{2}$/, 'start must be YYYY-MM'),
     end: z.string().regex(/^\d{4}-\d{2}$/, 'end must be YYYY-MM').nullable(),
     location: z.string(),
@@ -24,7 +25,7 @@ const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
-    line: lineEnum,
+    tint: tintEnum,
     category: z.string(),
     plain: z.string().max(220, 'plain must be 220 characters or fewer'),
     stack: z.array(z.string()),
@@ -58,7 +59,7 @@ const certifications = defineCollection({
     expires: z.string().regex(/^\d{4}-\d{2}$/).optional(),
     credentialId: z.string().optional(),
     url: z.string().url().optional(),
-    line: lineEnum.optional(),
+    tint: tintEnum.optional(),
   }),
 });
 
@@ -66,7 +67,7 @@ const skills = defineCollection({
   loader: file('./src/content/skills.yaml'),
   schema: z.object({
     name: z.string(),
-    line: lineEnum,
+    tint: tintEnum,
     plain: z.string(),
     items: z.array(
       z.object({

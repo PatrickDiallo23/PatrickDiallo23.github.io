@@ -1,13 +1,31 @@
 ---
 import { Image } from 'astro:assets';
-import profile from '../assets/profile.svg';
+import type { ImageMetadata } from 'astro';
 import { site } from '../config/site';
+
+// Drop your photo in src/assets as profile.jpg, .jpeg, .png, .webp, .avif or .svg.
+// A photo wins over the placeholder SVG when both exist.
+const found = import.meta.glob<ImageMetadata>('../assets/profile.{jpg,jpeg,png,webp,avif,svg}', {
+  eager: true,
+  import: 'default',
+});
+const [profilePath] = Object.keys(found).sort((a, b) => Number(a.endsWith('.svg')) - Number(b.endsWith('.svg')));
+const profile = found[profilePath];
+const isRaster = !profilePath.endsWith('.svg');
 ---
 
 <section id="about" aria-labelledby="about-heading">
   <h2 id="about-heading">About</h2>
   <div class="about-grid">
-    <Image src={profile} alt={`Portrait of ${site.name}`} width={160} height={160} class="portrait" />
+    <Image
+      src={profile}
+      alt={`Portrait of ${site.name}`}
+      width={176}
+      height={176}
+      densities={isRaster ? [1, 2] : undefined}
+      class:list={['portrait', { vector: !isRaster }]}
+      loading="eager"
+    />
     <div>
       <p>{site.tagline}</p>
       <ul class="facts" role="list">
@@ -21,21 +39,38 @@ import { site } from '../config/site';
 
 <style>
   section {
-    padding: var(--space-5) var(--space-3);
+    padding: var(--space-5) var(--gutter);
     max-width: 72rem;
     margin: 0 auto;
   }
 
   .about-grid {
-    display: flex;
-    gap: var(--space-4);
-    align-items: flex-start;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  @media (min-width: 640px) {
+    .about-grid {
+      grid-template-columns: auto 1fr;
+      gap: var(--space-4);
+    }
   }
 
   .portrait {
+    width: clamp(8rem, 30vw, 11rem);
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
     border-radius: var(--radius);
-    flex-shrink: 0;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+  }
+
+  /* The line-art placeholder is black on transparent: mount it on paper so it reads in dark mode too. */
+  .vector {
+    background: #fff;
   }
 
   .facts {

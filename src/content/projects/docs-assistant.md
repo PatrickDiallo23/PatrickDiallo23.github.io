@@ -1,6 +1,6 @@
 ---
 title: "Internal Docs Assistant"
-line: "ai"
+tint: "amber"
 category: "AI"
 plain: "A retrieval-augmented search assistant that answers questions from internal documentation, with sources."
 stack:

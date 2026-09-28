@@ -8,16 +8,19 @@
   --ink-muted: #4a5568;
   --rule: #d5dbe3;
 
-  --line-java: #c8102e;
-  --line-python: #1d4ed8;
-  --line-devops: #047857;
-  --line-ai: #a34d06;
-  --line-ai-stroke: #f5a524;
+  --tint-crimson: #c8102e;
+  --tint-cobalt: #1d4ed8;
+  --tint-emerald: #047857;
+  --tint-amber: #a34d06;
 
-  --accent: var(--line-python);
+  --accent: var(--tint-cobalt);
 
   --font-body:
     'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Display face for the name, motto and headings. To change it: swap the
+     @fontsource import in BaseLayout.astro and the first name below.
+     To remove it: delete that import; this falls back to the body font. */
+  --font-display: 'Cormorant Garamond Variable', var(--font-body);
   --font-mono: 'Atkinson Hyperlegible Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
   --text-sm: 0.8rem;
@@ -35,6 +38,7 @@
   --space-5: 3rem;
   --space-6: 4.5rem;
 
+  --gutter: clamp(1.25rem, 5vw, 2rem);
   --radius: 6px;
   --measure: 66ch;
   --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
@@ -49,11 +53,10 @@
   --ink-muted: #9fb0c3;
   --rule: #26364a;
 
-  --line-java: #ff7a7a;
-  --line-python: #7ab0ff;
-  --line-devops: #34d399;
-  --line-ai: #fbbf24;
-  --line-ai-stroke: #fbbf24;
+  --tint-crimson: #ff7a7a;
+  --tint-cobalt: #7ab0ff;
+  --tint-emerald: #34d399;
+  --tint-amber: #fbbf24;
 
   color-scheme: dark;
 }
@@ -66,22 +69,21 @@
     --ink-muted: #9fb0c3;
     --rule: #26364a;
 
-    --line-java: #ff7a7a;
-    --line-python: #7ab0ff;
-    --line-devops: #34d399;
-    --line-ai: #fbbf24;
-    --line-ai-stroke: #fbbf24;
+    --tint-crimson: #ff7a7a;
+    --tint-cobalt: #7ab0ff;
+    --tint-emerald: #34d399;
+    --tint-amber: #fbbf24;
 
     color-scheme: dark;
   }
 }
 
-/* Accent: a single line color applied everywhere. "all" (default) leaves
-   --accent unset here and each section uses its own --line-* instead. */
-:root[data-accent='java'] { --accent: var(--line-java); }
-:root[data-accent='python'] { --accent: var(--line-python); }
-:root[data-accent='devops'] { --accent: var(--line-devops); }
-:root[data-accent='ai'] { --accent: var(--line-ai); }
+/* Accent: one tint used for links, buttons and focus rings. "all" (default)
+   leaves --accent at cobalt; category tints (data-tint) keep their own color. */
+:root[data-accent='crimson'] { --accent: var(--tint-crimson); }
+:root[data-accent='cobalt'] { --accent: var(--tint-cobalt); }
+:root[data-accent='emerald'] { --accent: var(--tint-emerald); }
+:root[data-accent='amber'] { --accent: var(--tint-amber); }
 
 @media (prefers-contrast: more) {
   :root {
@@ -109,10 +111,17 @@ h1, h2, h3, h4 {
   font-weight: 750;
   letter-spacing: -0.01em;
   line-height: 1.2;
+  text-wrap: balance;
 }
 
-h1 { font-size: var(--text-3xl); }
-h2 { font-size: var(--text-2xl); }
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+h1 { font-size: clamp(2.5rem, 8vw, 4rem); line-height: 1.05; }
+h2 { font-size: clamp(2rem, 5.5vw, 2.8rem); }
 h3 { font-size: var(--text-lg); }
 h4 { font-size: var(--text-md); }
 
@@ -122,6 +131,10 @@ p, li {
 
 a {
   color: var(--accent);
+}
+
+a {
+  text-underline-offset: 0.2em;
 }
 
 code, pre, kbd {
@@ -157,6 +170,72 @@ code, pre, kbd {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* Category tint: any element with data-tint exposes --tint to its children. */
+[data-tint='crimson'] { --tint: var(--tint-crimson); }
+[data-tint='cobalt'] { --tint: var(--tint-cobalt); }
+[data-tint='emerald'] { --tint: var(--tint-emerald); }
+[data-tint='amber'] { --tint: var(--tint-amber); }
+
+/* Section rhythm + divider: a fading hairline with a fleuron at every
+   boundary between the hero and the sections that follow it. */
+main > * + section {
+  position: relative;
+}
+
+main > * + section::before,
+main > * + section::after {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+main > * + section::before {
+  content: '';
+  width: min(40rem, calc(100% - 2 * var(--gutter)));
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rule) 30%, var(--rule) 70%, transparent);
+}
+
+main > * + section::after {
+  content: '\2766';
+  padding: 0 0.75rem;
+  background: var(--bg);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+main section > h2:first-child {
+  margin-top: 0;
+}
+
+/* Plate: the framed card used for skill groups, posts, education and
+   certifications. The top edge takes the item's tint when it has one. */
+.plate {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-top: 2px solid var(--tint, var(--accent));
+  border-radius: var(--radius);
+  padding: var(--space-3);
+}
+
+a.plate {
+  display: block;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+@media (hover: hover) {
+  a.plate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -14px rgb(0 0 0 / 0.35);
+  }
 }
 
 ::selection {

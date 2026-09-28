@@ -9,13 +9,13 @@ const today = new Date().toISOString().slice(0, 7);
 ---
 
 <section id="education" aria-labelledby="education-heading">
-  <h2 id="education-heading">Education & certifications</h2>
+  <h2 id="education-heading">Education & Certifications</h2>
   <div class="lists">
     <div>
       <h3>Education</h3>
       <ul role="list">
         {education.map((e) => (
-          <li>
+          <li class="plate">
             <strong>{e.data.degree}</strong>
             <span class="meta">{e.data.school} · {e.data.start}–{e.data.end}</span>
             {e.data.notes && <p class="notes">{e.data.notes}</p>}
@@ -29,7 +29,7 @@ const today = new Date().toISOString().slice(0, 7);
         {certifications.map((c) => {
           const expired = c.data.expires ? c.data.expires < today : false;
           return (
-            <li>
+            <li class="plate" data-tint={c.data.tint}>
               <strong>{c.data.name}</strong>
               <span class="meta">
                 {c.data.issuer} · issued {c.data.issued}
@@ -50,16 +50,28 @@ const today = new Date().toISOString().slice(0, 7);
 
 <style>
   section {
-    padding: var(--space-5) var(--space-3);
+    padding: var(--space-5) var(--gutter);
     max-width: 72rem;
     margin: 0 auto;
   }
 
   .lists {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: var(--space-4);
     margin-top: var(--space-3);
+  }
+
+  @media (min-width: 720px) {
+    .lists {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  h3 {
+    margin: 0;
+    font-size: var(--text-md);
+    color: var(--ink-muted);
   }
 
   ul {
@@ -72,8 +84,7 @@ const today = new Date().toISOString().slice(0, 7);
   }
 
   li {
-    border-bottom: 1px solid var(--rule);
-    padding-bottom: var(--space-1);
+    padding: var(--space-2) var(--space-3);
   }
 
   .meta {
@@ -94,9 +105,4 @@ const today = new Date().toISOString().slice(0, 7);
     font-size: var(--text-sm);
   }
 
-  @media (max-width: 640px) {
-    .lists {
-      grid-template-columns: 1fr;
-    }
-  }
 </style>

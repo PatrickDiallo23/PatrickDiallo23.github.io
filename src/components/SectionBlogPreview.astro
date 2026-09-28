@@ -12,7 +12,7 @@ const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueO
   <ul class="posts" role="list">
     {posts.map((post) => (
       <li>
-        <a href={`/blog/${post.id}/`}>
+        <a href={`/blog/${post.id}/`} class="plate">
           <h3>{post.data.title}</h3>
           <p class="meta">
             {post.data.date.toISOString().slice(0, 10)} · {readingTime(post.body ?? '')} min read
@@ -27,7 +27,7 @@ const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueO
 
 <style>
   section {
-    padding: var(--space-5) var(--space-3);
+    padding: var(--space-5) var(--gutter);
     max-width: 72rem;
     margin: 0 auto;
   }
@@ -36,25 +36,33 @@ const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueO
     list-style: none;
     margin: var(--space-3) 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
     gap: var(--space-3);
   }
 
+  .posts li {
+    max-width: none;
+  }
+
   .posts a {
-    text-decoration: none;
-    color: var(--ink);
+    height: 100%;
+  }
+
+  .posts p {
+    margin: 0;
   }
 
   .posts h3 {
     margin: 0;
     font-size: var(--text-md);
+    color: var(--accent);
   }
 
-  .meta {
+  .posts .meta {
     color: var(--ink-muted);
     font-size: var(--text-sm);
-    margin: 0.2rem 0;
+    margin: 0.3rem 0 0.6rem;
   }
 
   .view-all {

@@ -1,101 +1,169 @@
 ---
 import { site } from '../config/site';
 
-const { mode, email, formsubmitId, replyTime } = site.contact;
+const { formspreeId, replyTime } = site.contact;
+
+// Brand marks (24px grid). Unknown platforms fall back to a link icon.
+const icons: Record<string, string> = {
+  github:
+    '<path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.39-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>',
+  linkedin:
+    '<path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/>',
+  goodreads:
+    '<g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11.5" cy="10" r="5"/><path d="M16.5 4.5v10.5a5.5 5.5 0 0 1-10.2 2.8"/></g>',
+};
+const fallbackIcon =
+  '<path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4L12 5.6M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4L12 18.4"/>';
+const labels: Record<string, string> = { github: 'GitHub', linkedin: 'LinkedIn', goodreads: 'Goodreads' };
 ---
 
 <section id="contact" aria-labelledby="contact-heading">
   <h2 id="contact-heading">Contact</h2>
-  <p>{replyTime}</p>
 
-  <div class="email-row">
-    <span>{email}</span>
-    <button type="button" id="copy-email" data-email={email}>Copy email</button>
-    <a href={`mailto:${email}`}>Email me directly</a>
+  <div class="contact-grid">
+    <div class="invite">
+      <p class="lead">Have an idea, a role, or a question? Let's talk.</p>
+      <p class="muted">{replyTime}</p>
+      {site.availability.open && (
+        <p class="availability"><span class="status-dot" aria-hidden="true"></span>{site.availability.text}</p>
+      )}
+
+      {site.socials.length > 0 && (
+        <ul class="socials" role="list">
+          {site.socials.map((s) => (
+            <li>
+              <a href={s.url} rel="me noopener">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" set:html={icons[s.platform] ?? fallbackIcon} />
+                <span>{labels[s.platform] ?? s.platform}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+
+    </div>
+
+    <div class="plate form-card">
+      {formspreeId ? (
+        <form id="contact-form" action={`https://formspree.io/f/${formspreeId}`} method="POST" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required maxlength="100" />
+            <p class="error" id="name-error" hidden>Please tell me your name.</p>
+          </div>
+          <div class="field">
+            <label for="email">Your email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required maxlength="200" />
+            <p class="error" id="email-error" hidden>I need a valid email address to reply to you.</p>
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required minlength="10" maxlength="5000"></textarea>
+            <p class="error" id="message-error" hidden>A few more words, please (10 characters minimum).</p>
+          </div>
+          {/* Honeypot: invisible to people; bots fill it and Formspree drops the message. */}
+          <input type="text" name="_gotcha" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <button type="submit">Send message</button>
+          <p id="form-status" role="status" aria-live="polite"></p>
+        </form>
+      ) : (
+        <div class="pending">
+          <p class="lead">The contact form is being set up.</p>
+          <p class="muted">Until then, the quickest way to reach me is a message on one of the profiles listed here.</p>
+        </div>
+      )}
+    </div>
   </div>
-  <p id="copy-status" role="status" aria-live="polite" class="visually-hidden"></p>
-
-  {mode !== 'links' && (
-    <form
-      id="contact-form"
-      data-mode={mode}
-      data-email={email}
-      action={mode === 'formsubmit' && formsubmitId ? `https://formsubmit.co/${formsubmitId}` : `mailto:${email}`}
-      method="POST"
-    >
-      <div class="field">
-        <label for="name">Name <span aria-hidden="true">*</span></label>
-        <input id="name" name="name" type="text" required />
-      </div>
-      <div class="field">
-        <label for="subject">Subject</label>
-        <input id="subject" name="subject" type="text" />
-      </div>
-      <div class="field">
-        <label for="message">Message <span aria-hidden="true">*</span></label>
-        <textarea id="message" name="message" rows="5" required></textarea>
-      </div>
-      {mode === 'formsubmit' && (
-        <>
-          <input type="text" name="_honey" class="visually-hidden" tabindex="-1" autocomplete="off" />
-          <input type="hidden" name="_subject" value={`New message from ${site.name}'s site`} />
-          <input type="hidden" name="_template" value="table" />
-        </>
-      )}
-      <button type="submit">Send message</button>
-      <p id="form-status" role="status" aria-live="polite"></p>
-      {mode === 'mailto' && (
-        <p class="hint">Your email app should open with the message ready. Nothing opened? Copy my email instead.</p>
-      )}
-    </form>
-  )}
-
-  {site.socials.length > 0 && (
-    <ul class="socials" role="list">
-      {site.socials.map((s) => (
-        <li>
-          <a href={s.url}>{s.platform}</a>
-        </li>
-      ))}
-    </ul>
-  )}
-
-  <a href={site.cv.file} download={site.cv.downloadName} class="cv-link-again">
-    Download CV ({site.cv.downloadName})
-  </a>
 </section>
 
 <style>
   section {
-    padding: var(--space-5) var(--space-3);
+    padding: var(--space-5) var(--gutter);
     max-width: 72rem;
     margin: 0 auto;
   }
 
-  .email-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    flex-wrap: wrap;
-    margin: var(--space-2) 0;
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
   }
 
-  .email-row button {
-    border: 1px solid var(--rule);
-    background: none;
-    color: var(--ink);
-    border-radius: var(--radius);
-    padding: 0.5rem 0.8rem;
-    cursor: pointer;
+  @media (min-width: 820px) {
+    .contact-grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: start;
+    }
+  }
+
+  .lead {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 0 0 var(--space-1);
+  }
+
+  .muted {
+    color: var(--ink-muted);
+    margin: 0 0 var(--space-2);
+  }
+
+  .availability {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin: 0 0 var(--space-3);
+  }
+
+  .status-dot {
+    flex-shrink: 0;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--tint-emerald);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--tint-emerald) 25%, transparent);
+  }
+
+  .socials {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    padding: 0;
+    margin: 0 0 var(--space-3);
+  }
+
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     min-height: 44px;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .socials a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .form-card {
+    padding: clamp(var(--space-2), 4vw, var(--space-4));
   }
 
   form {
-    max-width: 34rem;
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
-    margin-top: var(--space-3);
   }
 
   .field {
@@ -106,16 +174,39 @@ const { mode, email, formsubmitId, replyTime } = site.contact;
 
   label {
     font-size: var(--text-sm);
+    font-weight: 700;
   }
 
-  input, textarea {
+  input,
+  textarea {
     font: inherit;
-    padding: 0.6rem;
+    padding: 0.65rem 0.75rem;
     border: 1px solid var(--rule);
     border-radius: var(--radius);
-    background: var(--surface);
+    background: var(--bg);
     color: var(--ink);
     min-height: 44px;
+    width: 100%;
+    caret-color: var(--accent);
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible {
+    border-color: var(--accent);
+  }
+
+  [aria-invalid='true'] {
+    border-color: var(--tint-crimson);
+  }
+
+  .error {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--tint-crimson);
   }
 
   button[type='submit'] {
@@ -124,89 +215,104 @@ const { mode, email, formsubmitId, replyTime } = site.contact;
     color: var(--surface);
     border: none;
     border-radius: var(--radius);
-    padding: 0.6rem 1.2rem;
+    padding: 0.7rem 1.4rem;
+    font: inherit;
+    font-weight: 700;
     cursor: pointer;
     min-height: 44px;
   }
 
-  .hint, #form-status {
+  button[type='submit']:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  #form-status {
+    margin: 0;
     font-size: var(--text-sm);
     color: var(--ink-muted);
   }
 
-  .socials {
-    list-style: none;
-    display: flex;
-    gap: var(--space-2);
-    padding: 0;
-    margin: var(--space-3) 0;
+  #form-status[data-state='error'] {
+    color: var(--tint-crimson);
   }
 
-  .socials a {
-    text-transform: capitalize;
+  #form-status[data-state='sent'] {
+    color: var(--tint-emerald);
   }
 
-  .cv-link-again {
-    color: var(--accent);
+  .pending .lead {
+    font-size: var(--text-md);
+  }
+
+  @media (max-width: 480px) {
+    button[type='submit'] {
+      align-self: stretch;
+    }
   }
 </style>
 
 <script>
-  const copyButton = document.getElementById('copy-email');
-  const status = document.getElementById('copy-status');
-  copyButton?.addEventListener('click', async () => {
-    const email = copyButton.getAttribute('data-email') ?? '';
-    try {
-      await navigator.clipboard.writeText(email);
-      if (status) status.textContent = 'Email copied';
-    } catch {
-      if (status) status.textContent = 'Could not copy — select and copy the email manually.';
-    }
-  });
-
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
-  const formStatus = document.getElementById('form-status');
+  const status = document.getElementById('form-status');
+  const submit = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+  const fields = form ? Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]')) : [];
 
-  function buildMailto(email: string, name: string, subject: string, message: string) {
-    const s = encodeURIComponent(subject || `Message from ${name}`);
-    const b = encodeURIComponent(`${message}\n\n— ${name}`);
-    return `mailto:${email}?subject=${s}&body=${b}`;
+  function setStatus(text: string, state = '') {
+    if (!status) return;
+    status.textContent = text;
+    status.dataset.state = state;
   }
 
-  form?.addEventListener('submit', async (e) => {
-    const mode = form.dataset.mode;
-    const name = (form.elements.namedItem('name') as HTMLInputElement)?.value ?? '';
-    const subject = (form.elements.namedItem('subject') as HTMLInputElement)?.value ?? '';
-    const message = (form.elements.namedItem('message') as HTMLTextAreaElement)?.value ?? '';
+  // Inline validation: a field shows its message once the visitor leaves it or submits.
+  function check(field: HTMLInputElement | HTMLTextAreaElement) {
+    const ok = field.checkValidity();
+    const error = document.getElementById(`${field.id}-error`);
+    field.setAttribute('aria-invalid', String(!ok));
+    if (error) {
+      error.hidden = ok;
+      field.setAttribute('aria-describedby', error.id);
+    }
+    return ok;
+  }
 
-    if (mode === 'mailto') {
-      e.preventDefault();
-      const email = form.dataset.email ?? '';
-      const url = buildMailto(email, name, subject, message);
-      if (url.length > 1900 && formStatus) {
-        formStatus.textContent = 'That message is long for an email link — trim it a little, or copy my email instead.';
-        return;
-      }
-      window.location.href = url;
-      if (formStatus) formStatus.textContent = 'Your email app should open with the message ready.';
-    } else if (mode === 'formsubmit') {
-      e.preventDefault();
-      if (formStatus) formStatus.textContent = 'Sending…';
-      try {
-        const res = await fetch(form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/'), {
-          method: 'POST',
-          headers: { Accept: 'application/json' },
-          body: new FormData(form),
-        });
-        if (res.ok) {
-          if (formStatus) formStatus.textContent = 'Message sent. I usually reply within 2 working days.';
-          form.reset();
-        } else {
-          throw new Error('bad response');
-        }
-      } catch {
-        if (formStatus)
-          formStatus.textContent = 'Something went wrong sending that. Please email me directly instead.';
+  fields.forEach((f) => {
+    f.addEventListener('blur', () => check(f));
+    f.addEventListener('input', () => {
+      if (f.getAttribute('aria-invalid') === 'true') check(f);
+    });
+  });
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const invalid = fields.filter((f) => !check(f));
+    if (invalid.length) {
+      invalid[0].focus();
+      return;
+    }
+
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = 'Sending…';
+    }
+    setStatus('Sending your message…', 'sending');
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: new FormData(form),
+      });
+      if (!res.ok) throw new Error(`Formspree responded ${res.status}`);
+      form.reset();
+      fields.forEach((f) => f.removeAttribute('aria-invalid'));
+      setStatus('Message sent. Thank you, I will get back to you soon.', 'sent');
+    } catch {
+      setStatus('That did not go through. Please try again in a minute, or message me on LinkedIn.', 'error');
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = 'Send message';
       }
     }
   });

@@ -5,7 +5,11 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../config/site';
 
-const jobs = (await getCollection('experience')).sort((a, b) => b.data.start.localeCompare(a.data.start));
+const jobs = (await getCollection('experience')).sort(
+  (a, b) =>
+    Number(b.data.end === null) - Number(a.data.end === null) ||
+    b.data.start.localeCompare(a.data.start)
+);
 const education = (await getCollection('education')).sort((a, b) => b.data.end.localeCompare(a.data.end));
 const certifications = (await getCollection('certifications')).sort((a, b) => b.data.issued.localeCompare(a.data.issued));
 const skillGroups = await getCollection('skills');
@@ -24,7 +28,7 @@ function formatRange(start: string, end: string | null | undefined) {
 
     <h1>{site.name}</h1>
     <p class="role">{site.role} · {site.location}</p>
-    <p>{site.tagline}</p>
+    <p class="tagline">{site.tagline}</p>
 
     <h2>Experience</h2>
     {jobs.map((job) => (
@@ -80,6 +84,14 @@ function formatRange(start: string, end: string | null | undefined) {
     color: var(--ink-muted);
     font-size: var(--text-sm);
   }
+
+  .tagline {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    text-wrap: pretty;
+  }
+  
   @media print {
     .cv {
       max-width: none;

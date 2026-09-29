@@ -29,6 +29,9 @@ const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueO
             {post.data.date.toISOString().slice(0, 10)} · {readingTime(post.body ?? '')} min read
           </p>
           <p>{post.data.summary}</p>
+          <span class="cta">
+            Read article <span class="arrow" aria-hidden="true">&rarr;</span>
+          </span>
         </a>
       </li>
     ))}
@@ -57,7 +60,28 @@ const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueO
   }
 
   .posts a {
+    display: flex;
+    flex-direction: column;
     height: 100%;
+  }
+
+  .cta {
+    margin-top: auto;
+    padding-top: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .arrow {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .posts a:hover .arrow {
+    transform: translateX(4px);
   }
 
   .posts p {

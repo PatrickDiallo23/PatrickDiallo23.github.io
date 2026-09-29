@@ -27,7 +27,7 @@ const isRaster = !profilePath.endsWith('.svg');
       loading="eager"
     />
     <div>
-      <p>{site.tagline}</p>
+      <p class="tagline">{site.tagline}</p>
       <ul class="facts" role="list">
         <li><strong>Location:</strong> {site.location}</li>
         <li><strong>Languages:</strong> {site.languages.join(', ')}</li>
@@ -71,6 +71,14 @@ const isRaster = !profilePath.endsWith('.svg');
   /* The line-art placeholder is black on transparent: mount it on paper so it reads in dark mode too. */
   .vector {
     background: #fff;
+  }
+
+  .tagline {
+    margin-top: 0;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    text-wrap: pretty;
   }
 
   .facts {

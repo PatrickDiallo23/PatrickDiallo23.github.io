@@ -1,5 +1,5 @@
 - id: "backend"
-  name: "Backend & languages"
+  name: "Backend & Languages"
   tint: "crimson"
   plain: "I write backend services on the JVM and in Python, and can work in C/C++ and C# when a project needs it."
   items:
@@ -11,7 +11,7 @@
     - { name: "C# / .NET", level: "comfortable" }
     - { name: "Go", level: "comfortable" }
 - id: "frontend"
-  name: "Frontend & mobile"
+  name: "Frontend & Mobile"
   tint: "cobalt"
   plain: "I build web and mobile interfaces, from Angular and React to Flutter apps."
   items:
@@ -34,7 +34,7 @@
     - { name: "ClearCase", level: "comfortable" }
     - { name: "CMake", level: "comfortable" }
 - id: "ai"
-  name: "AI & optimization"
+  name: "AI & Optimization"
   tint: "amber"
   plain: "I build features on top of language models, and use optimization solvers to schedule complex problems."
   items:
@@ -45,7 +45,7 @@
     - { name: "Timefold / Operations Research", level: "comfortable" }
     - { name: "Machine learning", level: "learning" }
 - id: "data"
-  name: "Data & messaging"
+  name: "Data & Messaging"
   tint: "cobalt"
   plain: "I work with relational and document databases and with message-driven systems."
   items:
@@ -55,7 +55,7 @@
     - { name: "Kafka", level: "learning" }
     - { name: "Spark", level: "learning" }
 - id: "ways"
-  name: "Ways of working"
+  name: "Ways of Working"
   tint: "emerald"
   plain: "I mentor, lead, and keep delivery organised."
   items:

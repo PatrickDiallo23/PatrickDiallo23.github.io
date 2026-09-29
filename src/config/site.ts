@@ -63,6 +63,8 @@ export const site = {
     { platform: 'github', url: 'https://github.com/PatrickDiallo23' },
     { platform: 'linkedin', url: 'https://www.linkedin.com/in/diallo-francis-patrick-4a1a61218/' },
     { platform: 'goodreads', url: 'https://www.goodreads.com/user/show/144603964-patrickus23' },
+    { platform: 'scholar', url: 'https://scholar.google.com/citations?hl=en&user=GsmTEzUAAAAJ' },
+    
   ] as { platform: string; url: string }[], // icon picked from platform; delete a line to hide it
 
   links: [] as { label: string; url: string }[], // optional "Notes and resources"

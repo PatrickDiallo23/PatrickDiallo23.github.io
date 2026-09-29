@@ -11,7 +11,7 @@ import SectionEducation from '../components/SectionEducation.astro';
 import SectionBlogPreview from '../components/SectionBlogPreview.astro';
 import SectionContact from '../components/SectionContact.astro';
 import { site } from '../config/site';
-import { personJsonLd } from '../lib/jsonld';
+import { personJsonLd, websiteJsonLd } from '../lib/jsonld';
 
 const skillGroups = await getCollection('skills');
 const knowsAbout = skillGroups.flatMap((g) => g.data.items.map((i) => i.name));
@@ -38,7 +38,11 @@ const currently = [
 ].filter(Boolean) as { label: string; text: string; url?: string }[];
 ---
 
-<BaseLayout title={site.name} description={site.tagline} jsonLd={personJsonLd(knowsAbout)}>
+<BaseLayout
+  title={`${site.name} — ${site.role}`}
+  description={site.description}
+  jsonLd={[websiteJsonLd(), personJsonLd(knowsAbout)]}
+>
   <Header slot="header" />
 
   <div class="hero">

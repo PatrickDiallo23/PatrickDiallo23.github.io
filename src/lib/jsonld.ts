@@ -8,7 +8,19 @@ export function personJsonLd(knowsAbout: string[]) {
     jobTitle: site.role,
     url: site.url,
     sameAs: site.socials.map((s) => s.url),
+    description: site.description,
+    address: { '@type': 'PostalAddress', addressLocality: site.location },
     knowsAbout,
+  };
+}
+
+export function websiteJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.name,
+    url: site.url,
+    inLanguage: 'en',
   };
 }
 

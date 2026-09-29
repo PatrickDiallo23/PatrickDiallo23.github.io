@@ -2,11 +2,12 @@
 import { getCollection, render } from 'astro:content';
 
 const jobsRaw = await getCollection('experience');
-const jobs = jobsRaw.sort((a, b) => b.data.start.localeCompare(a.data.start));
+const jobs = jobsRaw.sort(
+  (a, b) =>
+    Number(b.data.end === null) - Number(a.data.end === null) ||
+    b.data.start.localeCompare(a.data.start)
+);
 
-function formatRange(start: string, end: string | null) {
-  return `${start} — ${end ?? 'present'}`;
-}
 ---
 
 <section id="experience" aria-labelledby="experience-heading">
@@ -32,7 +33,7 @@ function formatRange(start: string, end: string | null) {
                   )}
                 </h3>
                 <p class="meta">
-                  {formatRange(job.data.start, job.data.end)} · {job.data.location}
+                  {job.data.start} — {job.data.end ?? <strong>present</strong>} · {job.data.location}
                 </p>
               </div>
               <p class="plain">{job.data.plain}</p>

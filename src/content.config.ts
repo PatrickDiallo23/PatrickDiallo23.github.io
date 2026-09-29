@@ -32,6 +32,7 @@ const projects = defineCollection({
     image: image().optional(),
     repo: z.string().url().optional(),
     live: z.string().url().optional(),
+    paper: z.string().url().optional(),
     start: z.string().regex(/^\d{4}-\d{2}$/, 'start must be YYYY-MM'),
     end: z.string().regex(/^\d{4}-\d{2}$/).optional(),
     featured: z.boolean().default(false),

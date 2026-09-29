@@ -44,6 +44,7 @@ const { Content } = await render(project);
     <p class="links">
       {project.data.repo && <a href={project.data.repo}>Repository</a>}
       {project.data.live && <a href={project.data.live}>Live</a>}
+      {project.data.paper && <a href={project.data.paper}>Paper</a>}
     </p>
     <div class="prose">
       <Content />

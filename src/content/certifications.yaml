@@ -1,3 +1,9 @@
+- id: "fde-basecamp"
+  name: "FDE Partner Basecamp"
+  issuer: "Anthropic"
+  issued: "2026-07"
+  url: "https://anthropic-partners.skilljar.com/partner-basecamp"
+  tint: "amber"
 - id: "ccao-f"
   name: "Claude Certified Associate - Foundations"
   issuer: "Anthropic"
@@ -14,4 +20,3 @@
   credentialId: "F622F7D2AD82286B"
   url: "https://learn.microsoft.com/en-us/users/DialloFrancisPatrick-0259/credentials/F622F7D2AD82286B?ref=https%3a%2f%2fwww.linkedin.com%2f"
   tint: "amber"
-

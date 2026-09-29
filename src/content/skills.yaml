@@ -1,36 +1,66 @@
 - id: "backend"
   name: "Backend & languages"
   tint: "crimson"
-  plain: "I write backend services and know my way around the JVM and Python ecosystems."
+  plain: "I write backend services on the JVM and in Python, and can work in C/C++ and C# when a project needs it."
   items:
     - { name: "Java", level: "daily" }
     - { name: "Spring Boot", level: "daily" }
     - { name: "Python", level: "daily" }
-    - { name: "Go", level: "learning" }
-- id: "data"
-  name: "Data & pipelines"
+    - { name: "REST / gRPC / WebSocket", level: "comfortable" }
+    - { name: "C / C++", level: "learning" }
+    - { name: "C# / .NET", level: "comfortable" }
+    - { name: "Go", level: "comfortable" }
+- id: "frontend"
+  name: "Frontend & mobile"
   tint: "cobalt"
-  plain: "I move and shape data, and keep the pipelines that do it honest."
+  plain: "I build web and mobile interfaces, from Angular and React to Flutter apps."
   items:
-    - { name: "PostgreSQL", level: "daily" }
-    - { name: "Airflow", level: "comfortable" }
-    - { name: "dbt", level: "comfortable" }
-    - { name: "Kafka", level: "comfortable" }
+    - { name: "JavaScript / TypeScript", level: "daily" }
+    - { name: "React", level: "comfortable" }
+    - { name: "Angular", level: "daily" }
+    - { name: "HTML / CSS", level: "comfortable" }
+    - { name: "Flutter / Dart", level: "comfortable" }
+    - { name: "Figma", level: "comfortable" }
 - id: "platform"
   name: "Platform & DevOps"
   tint: "emerald"
-  plain: "I automate how software gets tested, deployed, and kept running."
+  plain: "I automate how software gets integrated, built, and delivered."
   items:
-    - { name: "Kubernetes", level: "daily" }
-    - { name: "Terraform", level: "daily" }
     - { name: "GitHub Actions", level: "daily" }
-    - { name: "Prometheus", level: "comfortable" }
+    - { name: "Bazel", level: "comfortable" }
+    - { name: "Git / GitHub", level: "daily" }
+    - { name: "Linux & shell scripting", level: "daily" }
+    - { name: "Docker", level: "comfortable" }
+    - { name: "ClearCase", level: "comfortable" }
+    - { name: "CMake", level: "comfortable" }
 - id: "ai"
-  name: "AI & search"
+  name: "AI & optimization"
   tint: "amber"
-  plain: "I build features on top of language models, grounded in real data."
+  plain: "I build features on top of language models, and use optimization solvers to schedule complex problems."
   items:
-    - { name: "Retrieval-augmented generation", level: "comfortable" }
-    - { name: "Claude / Anthropic API", level: "comfortable" }
-    - { name: "pgvector", level: "comfortable" }
-    - { name: "Fine-tuning", level: "learning" }
+    - { name: "GitHub Copilot & AI agents", level: "daily" }
+    - { name: "Claude / Anthropic API", level: "daily" }
+    - { name: "RAG & vector databases", level: "comfortable" }
+    - { name: "Azure OpenAI", level: "comfortable" }
+    - { name: "Timefold / Operations Research", level: "comfortable" }
+    - { name: "Machine learning", level: "learning" }
+- id: "data"
+  name: "Data & messaging"
+  tint: "cobalt"
+  plain: "I work with relational and document databases and with message-driven systems."
+  items:
+    - { name: "SQL (PostgreSQL, MySQL)", level: "comfortable" }
+    - { name: "MongoDB", level: "comfortable" }
+    - { name: "RabbitMQ", level: "comfortable" }
+    - { name: "Kafka", level: "learning" }
+    - { name: "Spark", level: "learning" }
+- id: "ways"
+  name: "Ways of working"
+  tint: "emerald"
+  plain: "I mentor, lead, and keep delivery organised."
+  items:
+    - { name: "Scrum & Product Ownership", level: "comfortable" }
+    - { name: "Mentoring & workshops", level: "daily" }
+    - { name: "Technical documentation", level: "daily" }
+    - { name: "Jira / Confluence", level: "daily" }
+    - { name: "Soft skills & Communication", level: "daily" }

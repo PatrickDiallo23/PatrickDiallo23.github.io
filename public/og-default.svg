@@ -4,6 +4,6 @@
   <circle cx="340" cy="460" r="10" fill="#FF7A7A"/>
   <circle cx="600" cy="460" r="10" fill="#7AB0FF"/>
   <circle cx="860" cy="460" r="10" fill="#34D399"/>
-  <text x="100" y="180" fill="#E6EDF5" font-size="64" font-family="sans-serif" font-weight="700">Your Name</text>
-  <text x="100" y="240" fill="#9FB0C3" font-size="32" font-family="sans-serif">Software engineer</text>
+  <text x="100" y="180" fill="#E6EDF5" font-size="64" font-family="sans-serif" font-weight="700">Francis-Patrick Diallo</text>
+  <text x="100" y="240" fill="#9FB0C3" font-size="32" font-family="sans-serif">DevOps Engineer</text>
 </svg>

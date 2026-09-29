@@ -56,6 +56,13 @@ const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     ))}
 
     <script is:inline src="/theme-init.js"></script>
+    {import.meta.env.PROD && site.analytics.provider === 'cloudflare' && site.analytics.id && (
+      <script
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={`{"token": "${site.analytics.id}"}`}
+      />
+    )}
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>

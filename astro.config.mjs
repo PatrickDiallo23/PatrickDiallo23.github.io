@@ -14,12 +14,13 @@ export default defineConfig({
       directives: [
         "default-src 'self'",
         "img-src 'self' data:",
-        "connect-src 'self' https://formspree.io",
+        "connect-src 'self' https://formspree.io https://cloudflareinsights.com",
         "form-action 'self' https://formspree.io",
         "base-uri 'self'",
         "object-src 'none'",
       ],
       styleDirective: { resources: ["'self'", "'unsafe-inline'"] },
+      scriptDirective: { resources: ["'self'", "https://static.cloudflareinsights.com"] },
     },
   },
   integrations: [

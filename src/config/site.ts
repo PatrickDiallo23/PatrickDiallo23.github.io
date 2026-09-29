@@ -6,7 +6,7 @@
 export type TintKey = 'crimson' | 'cobalt' | 'emerald' | 'amber';
 
 export const site = {
-  name: 'Your Name',
+  name: 'Francis-Patrick Diallo',
   role: 'Regular DevOps Engineer',
   motto: 'Ora et labora',
   tagline:
@@ -19,9 +19,9 @@ export const site = {
 
   // Hero "Currently" block. Leave a value empty ('') to hide that row.
   currently: {
-    building: 'TODO: what you are building right now',
-    learning: 'TODO: what you are learning right now',
-    reading: { title: 'TODO: the book you are reading', url: 'https://www.goodreads.com/user/show/144603964-patrickus23' },
+    building: 'Scheduling Optimization: School Timetabling and Conference Scheduling with Timefold',
+    learning: 'Operations Research: Methods and Applications',
+     reading: { title: 'TODO: the book you are reading', url: 'https://www.goodreads.com/user/show/144603964-patrickus23' },
   },
 
   availability: {
@@ -71,8 +71,10 @@ export const site = {
   },
 
   analytics: {
-    provider: null as null | 'goatcounter' | 'cloudflare',
-    id: '',
+    // Cloudflare Web Analytics: dash.cloudflare.com > your domain > Analytics & Logs
+    // > Web Analytics > Manage site > copy the token (safe to publish, it's a public beacon id).
+    provider: 'cloudflare' as null | 'goatcounter' | 'cloudflare',
+    id: '8808bcc4f06446aa95183cef8912eed5', // paste the token here to go live
   },
 } as const;
 

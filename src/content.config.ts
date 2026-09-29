@@ -23,13 +23,13 @@ const experience = defineCollection({
 
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     tint: tintEnum,
     category: z.string(),
     plain: z.string().max(220, 'plain must be 220 characters or fewer'),
     stack: z.array(z.string()),
-    image: z.string().optional(),
+    image: image().optional(),
     repo: z.string().url().optional(),
     live: z.string().url().optional(),
     start: z.string().regex(/^\d{4}-\d{2}$/, 'start must be YYYY-MM'),
@@ -81,14 +81,14 @@ const skills = defineCollection({
 
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     summary: z.string().max(160, 'summary must be 160 characters or fewer'),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     tags: z.array(z.string()),
     draft: z.boolean().default(false),
-    cover: z.string().optional(),
+    cover: image().optional(),
   }),
 });
 

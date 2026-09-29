@@ -12,7 +12,7 @@ const visibleSections = site.sections.filter((s) => s.visible);
       <ol class="track" role="list">
         {visibleSections.map((section) => (
           <li>
-            <a href={`#${section.id}`} data-station={section.id}>
+            <a href={`/#${section.id}`} data-station={section.id}>
               <span class="dot" aria-hidden="true"></span>
               <span class="label">{section.title}</span>
             </a>

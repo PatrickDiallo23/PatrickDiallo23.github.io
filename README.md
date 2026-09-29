@@ -146,10 +146,14 @@ npm test          # vitest
 3. **Jobs** — one Markdown file per job in `src/content/experience/`. `plain` is the one-liner
    everyone sees; the Markdown body is the technical detail behind "Show technical details".
 4. **Projects** (optional) — Markdown files in `src/content/projects/`, then set the `projects`
-   section's `visible: true` in `site.ts`.
+   section's `visible: true` in `site.ts`. Add `image: "./cover.jpg"` in the frontmatter (file next
+   to the `.md`, path relative to it) for a preview thumbnail on the projects grid and a hero image
+   on the project's detail page — omit it and the card/page renders with no image, same as before.
 5. **Education / certifications / skills** — edit the three YAML files in `src/content/`.
 6. **Blog posts** — add an `.mdx` file to `src/content/blog/`. Set `draft: true` to hide a post in
-   production while still previewing it in `npm run dev`.
+   production while still previewing it in `npm run dev`. Add `cover: "./cover.jpg"` in the
+   frontmatter (file next to the `.mdx`, path relative to it) for a preview thumbnail on the blog
+   list and a hero image on the post page — optional, same as `image` on projects.
 7. **Profile photo** — drop `profile.jpg` / `.jpeg` / `.png` / `.webp` / `.avif` into `src/assets/`.
    A photo wins over the placeholder `profile.svg`; it is resized and served at 1x and 2x.
 8. **CV** — put your PDF in `public/cv/` and update `cv.file` and `cv.updated` in `site.ts`. `/cv` is a printable page
@@ -177,6 +181,12 @@ field, a date in the wrong format, a `plain` summary over 220 characters — `np
 
 The live site is never affected by a bad edit: the deploy workflow won't publish a build that fails,
 so the last good version stays up.
+
+**Project/post preview images** (`image` on a project, `cover` on a post) go through Astro's built-in
+image pipeline (Sharp), same as the profile photo. Supported formats: `.jpg` / `.jpeg`, `.png`,
+`.webp`, `.avif`, `.gif`, `.tiff`. `.svg` also works but is served as-is, unresized. Each is built to
+a `.webp`, resized, and served with explicit `width`/`height` (no layout shift). Path is relative to
+the content file, e.g. `image: "./cover.jpg"` with `cover.jpg` sitting next to `docs-assistant.md`.
 
 ## Testing
 

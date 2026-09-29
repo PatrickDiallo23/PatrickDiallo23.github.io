@@ -1,7 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#1D4ED8"/>
-  <circle cx="8" cy="24" r="2.6" fill="#F4F6F9"/>
-  <circle cx="16" cy="24" r="2.6" fill="#F4F6F9"/>
-  <circle cx="24" cy="24" r="2.6" fill="#F4F6F9"/>
-  <path d="M8 24V10M16 24V16M24 24V8" stroke="#F4F6F9" stroke-width="2.4" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512">
+  
+  <defs>
+    <radialGradient id="parch1d" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#f6ecd3"></stop>
+      <stop offset="100%" stop-color="#e6d4a8"></stop>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#parch1d)"></circle>
+  <text x="50" y="60" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="34" fill="#2c2419">DFP</text>
 </svg>

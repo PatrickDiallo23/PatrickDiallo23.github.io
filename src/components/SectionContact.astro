@@ -32,7 +32,7 @@ const labels: Record<string, string> = { github: 'GitHub', linkedin: 'LinkedIn',
         <ul class="socials" role="list">
           {site.socials.map((s) => (
             <li>
-              <a href={s.url} rel="me noopener">
+              <a href={s.url} target="_blank" rel="me noopener noreferrer">
                 <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" set:html={icons[s.platform] ?? fallbackIcon} />
                 <span>{labels[s.platform] ?? s.platform}</span>
               </a>

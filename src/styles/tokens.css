@@ -97,6 +97,7 @@
 
 html {
   font-family: var(--font-body);
+  scroll-behavior: smooth;
 }
 
 body {
@@ -114,9 +115,10 @@ h1, h2, h3, h4 {
   text-wrap: balance;
 }
 
+/* Display face overrides the shared heading rule above. Cormorant Variable tops out at 900. */
 h1, h2 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 900;
   letter-spacing: 0;
 }
 
@@ -131,9 +133,6 @@ p, li {
 
 a {
   color: var(--accent);
-}
-
-a {
   text-underline-offset: 0.2em;
 }
 
@@ -263,8 +262,4 @@ a.plate {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-html {
-  scroll-behavior: smooth;
 }

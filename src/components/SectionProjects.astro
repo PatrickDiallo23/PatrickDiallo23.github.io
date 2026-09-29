@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 
 const projects = (await getCollection('projects')).sort((a, b) => b.data.start.localeCompare(a.data.start));
 const categories = ['All', ...new Set(projects.map((p) => p.data.category))];
@@ -17,7 +18,17 @@ const categories = ['All', ...new Set(projects.map((p) => p.data.category))];
   <ul class="grid" role="list">
     {projects.map((p) => (
       <li data-category={p.data.category}>
-        <a href={`/projects/${p.id}/`}>
+        <a href={`/projects/${p.id}/`} target="_blank" rel="noopener noreferrer">
+          {p.data.image && (
+            <Image
+              src={p.data.image}
+              alt=""
+              width={480}
+              height={270}
+              class="thumb"
+              loading="lazy"
+            />
+          )}
           <h3 data-tint={p.data.tint}>{p.data.title}</h3>
           <p>{p.data.plain}</p>
           <p class="stack">{p.data.stack.join(', ')}</p>
@@ -81,6 +92,15 @@ const categories = ['All', ...new Set(projects.map((p) => p.data.category))];
   }
 
   h3[data-tint] { color: var(--tint); }
+
+  .thumb {
+    display: block;
+    width: calc(100% + 2 * var(--space-2));
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-2)) var(--space-2);
+    border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+  }
 
   .stack {
     color: var(--ink-muted);

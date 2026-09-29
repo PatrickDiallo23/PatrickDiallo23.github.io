@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Architecture</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#16202e;--mute:#556174;--rule:#d9dee6;--accent:#1d4ed8;--soft:#e8eefc;--warn:#a34d06;--code:#eef1f5;--n1:#e8eefc;--n2:#e3f5ec;--n3:#fdf1dc;--n4:#f3e6ea;--stroke:#5b6b82}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1621;--panel:#152131;--ink:#e6edf5;--mute:#9fb0c3;--rule:#26364a;--accent:#7ab0ff;--soft:#1b2c47;--warn:#fbbf24;--code:#1c2b3e;--n1:#1b2c47;--n2:#12352b;--n3:#3a2f14;--n4:#3a1f2a;--stroke:#8ea2bd}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{display:grid;grid-template-columns:230px minmax(0,1fr);max-width:1180px;margin:0 auto}
+nav{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;padding:24px 16px;border-right:1px solid var(--rule)}
+nav b{display:block;margin-bottom:12px}
+nav a{display:block;padding:4px 8px;color:var(--mute);text-decoration:none;border-radius:6px;font-size:14px}
+nav a:hover{background:var(--soft);color:var(--ink)}
+main{padding:24px 28px 80px;min-width:0}
+section{margin-bottom:44px;scroll-margin-top:16px}
+h1{font-size:2rem;margin:0 0 4px}
+h2{font-size:1.4rem;margin:0 0 12px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:1.05rem;margin:18px 0 6px}
+p{margin:8px 0;max-width:75ch}
+.lead{color:var(--mute)}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font:0.88em ui-monospace,Consolas,monospace}
+pre{background:var(--code);padding:12px;border-radius:8px;overflow:auto;font:13px/1.5 ui-monospace,Consolas,monospace}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--panel)}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft)}
+.tw{overflow-x:auto}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:12px 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.warn{border:1px solid var(--warn);background:color-mix(in srgb,var(--warn) 8%,var(--panel))}
+svg{width:100%;height:auto;background:var(--panel);border:1px solid var(--rule);border-radius:10px}
+svg text{fill:var(--ink);font:12px system-ui,sans-serif}
+svg .b{font-weight:600}
+svg .m{fill:var(--mute);font-size:10.5px}
+svg rect.n{stroke:var(--stroke);stroke-width:1.2}
+svg .e{stroke:var(--stroke);stroke-width:1.4;fill:none}
+svg .d{stroke-dasharray:5 4}
+svg marker path{fill:var(--stroke)}
+.n1{fill:var(--n1)}.n2{fill:var(--n2)}.n3{fill:var(--n3)}.n4{fill:var(--n4)}
+ul{padding-left:20px;margin:6px 0}
+li{margin:3px 0}
+@media (max-width:800px){.wrap{grid-template-columns:1fr}nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:2px}nav b{width:100%;margin:0}main{padding:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav aria-label="Sections">
+<b>Portfolio architecture</b>
+<a href="#overview">Overview</a><a href="#system">System architecture</a><a href="#stack">Tech stack</a><a href="#dirs">Directory map</a><a href="#routes">Routes</a><a href="#components">Component composition</a><a href="#dataflow">Data flow</a><a href="#schemas">Content schemas</a><a href="#styling">Styling and tokens</a><a href="#cicd">CI/CD</a><a href="#recipes">How-to recipes</a><a href="#gotchas">Gotchas</a><a href="#graphify">Graphify insights</a>
+</nav>
+<main>
+<section id="overview">
+<h1>Portfolio architecture</h1>
+<p class="lead">Static Astro 7 site, TypeScript strict, plain CSS, no UI framework, no server. Built from the working tree (not HEAD), verified against source files.</p>
+<div class="grid">
+<div class="card"><b>Two inputs</b><p><code>src/config/site.ts</code> (identity, section order, contact, analytics) and six Zod content collections.</p></div>
+<div class="card"><b>Build-time only</b><p>Pages call <code>getCollection</code> in frontmatter and emit plain HTML plus 4 text/XML endpoints into <code>dist/</code>.</p></div>
+<div class="card"><b>Hard gates</b><p><code>npm run build</code> = <code>astro check &amp;&amp; astro build</code>. Type or schema errors fail CI and block deploy.</p></div>
+<div class="card"><b>Deploy</b><p>GitHub Actions to GitHub Pages at <code>diallofrancispatrick.com</code>.</p></div>
+</div>
+</section>
+
+<section id="system">
+<h2>System architecture</h2>
+<svg viewBox="0 0 900 380" role="img" aria-label="System architecture diagram">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="n n1" x="20" y="30" width="170" height="60" rx="8"/><text class="b" x="105" y="55" text-anchor="middle">Content files</text><text class="m" x="105" y="72" text-anchor="middle">blog / projects / experience / yaml</text>
+<rect class="n n1" x="20" y="120" width="170" height="60" rx="8"/><text class="b" x="105" y="145" text-anchor="middle">site.ts</text><text class="m" x="105" y="162" text-anchor="middle">single config object</text>
+<rect class="n n1" x="20" y="210" width="170" height="60" rx="8"/><text class="b" x="105" y="235" text-anchor="middle">astro.config.mjs</text><text class="m" x="105" y="252" text-anchor="middle">site, CSP, mdx, sitemap, Shiki</text>
+<rect class="n n1" x="20" y="300" width="170" height="60" rx="8"/><text class="b" x="105" y="325" text-anchor="middle">assets + public</text><text class="m" x="105" y="342" text-anchor="middle">images, theme-init.js, CV PDF</text>
+<rect class="n n2" x="260" y="30" width="170" height="60" rx="8"/><text class="b" x="345" y="55" text-anchor="middle">content.config.ts</text><text class="m" x="345" y="72" text-anchor="middle">loaders + Zod schemas</text>
+<rect class="n n2" x="260" y="150" width="170" height="90" rx="8"/><text class="b" x="345" y="175" text-anchor="middle">Pages + endpoints</text><text class="m" x="345" y="192" text-anchor="middle">index, blog, projects, cv,</text><text class="m" x="345" y="206" text-anchor="middle">404, rss, llms, robots</text>
+<rect class="n n2" x="260" y="290" width="170" height="60" rx="8"/><text class="b" x="345" y="315" text-anchor="middle">src/lib helpers</text><text class="m" x="345" y="332" text-anchor="middle">jsonld, readingTime, similar</text>
+<rect class="n n3" x="500" y="100" width="150" height="60" rx="8"/><text class="b" x="575" y="125" text-anchor="middle">Components</text><text class="m" x="575" y="142" text-anchor="middle">Header, Footer, Section*</text>
+<rect class="n n3" x="500" y="200" width="150" height="60" rx="8"/><text class="b" x="575" y="225" text-anchor="middle">BaseLayout</text><text class="m" x="575" y="242" text-anchor="middle">head, meta, CSP, slots</text>
+<rect class="n n4" x="720" y="150" width="150" height="90" rx="8"/><text class="b" x="795" y="180" text-anchor="middle">dist/ static HTML</text><text class="m" x="795" y="198" text-anchor="middle">GitHub Pages</text><text class="m" x="795" y="212" text-anchor="middle">custom domain</text>
+<rect class="n n4" x="720" y="290" width="150" height="60" rx="8"/><text class="b" x="795" y="315" text-anchor="middle">Formspree, Cloudflare</text><text class="m" x="795" y="332" text-anchor="middle">runtime, browser-side</text>
+<path class="e" d="M190 60H260" marker-end="url(#a)"/><path class="e" d="M345 90V150" marker-end="url(#a)"/><path class="e" d="M190 150H260" marker-end="url(#a)"/><path class="e" d="M190 240H230V215H260" marker-end="url(#a)"/><path class="e" d="M190 330H230V225" /><path class="e" d="M345 290V240" marker-end="url(#a)"/>
+<path class="e" d="M430 175H470V130H500" marker-end="url(#a)"/><path class="e" d="M430 215H500" marker-end="url(#a)"/><path class="e" d="M575 160V200" marker-end="url(#a)"/><path class="e" d="M650 230H685V195H720" marker-end="url(#a)"/><path class="e d" d="M795 240V290" marker-end="url(#a)"/>
+</svg>
+<p>Components read <code>site</code> and collections directly; pages fill <code>BaseLayout</code> slots (header, default, footer). No <code>client:*</code> islands; interactivity is vanilla TS in <code>&lt;script&gt;</code> blocks.</p>
+</section>
+
+<section id="stack">
+<h2>Tech stack</h2>
+<div class="tw"><table>
+<tr><th>Layer</th><th>Choice</th></tr>
+<tr><td>Framework</td><td><code>astro ^7.3.5</code>, ESM, Node <code>&gt;=22.12.0</code>, npm</td></tr>
+<tr><td>Content</td><td><code>@astrojs/mdx ^8.0.2</code>, Shiki <code>github-light</code>/<code>github-dark</code></td></tr>
+<tr><td>SEO / feeds</td><td><code>@astrojs/sitemap ^3.7.4</code> (excludes <code>/tags/</code>), <code>@astrojs/rss ^4.0.19</code>, JSON-LD helpers</td></tr>
+<tr><td>Language</td><td><code>typescript ^6.0.3</code>, extends <code>astro/tsconfigs/strict</code>, relative imports only</td></tr>
+<tr><td>Checks / tests</td><td><code>@astrojs/check ^0.9.10</code>; <code>vitest ^3.2.4</code> (only <code>src/lib/lib.test.ts</code>, 6 tests)</td></tr>
+<tr><td>Fonts</td><td>Self-hosted <code>@fontsource-variable</code>: Atkinson Hyperlegible Next and Mono, Cormorant Garamond</td></tr>
+<tr><td>Styling</td><td>Plain CSS: <code>tokens.css</code> + scoped styles. No Tailwind.</td></tr>
+<tr><td>Hosting</td><td>GitHub Pages, custom domain via <code>CNAME</code></td></tr>
+</table></div>
+<p class="lead">Versions are declared ranges; installed versions were not checked.</p>
+</section>
+
+<section id="dirs">
+<h2>Directory map</h2>
+<pre>/
+  astro.config.mjs   site URL, CSP, mdx, sitemap, Shiki
+  package.json  tsconfig.json  vitest.config.ts  CNAME
+  .github/workflows/deploy.yml
+public/              copied as-is to dist/
+  theme-init.js  favicon.svg  og-default.svg  CNAME
+  cv/*.pdf  images/diagram-canary.svg
+src/
+  config/site.ts     single typed config
+  content.config.ts  6 collections + Zod
+  content/           blog/*.mdx  projects/*.md  experience/*.md
+                     education.yaml  certifications.yaml  skills.yaml
+  assets/profile.jpg
+  layouts/BaseLayout.astro
+  components/        Header Footer Section{About,Skills,Experience,Projects,Education,BlogPreview,Contact}
+  pages/             index cv 404 blog/ projects/ rss.xml.ts llms*.txt.ts robots.txt.ts
+  lib/               jsonld.ts readingTime.ts similarPosts.ts lib.test.ts
+  styles/tokens.css
+(tooling, not app code: graphify-out/ research_notes/ reports/ .claude/ .impeccable/)</pre>
+</section>
+
+<section id="routes">
+<h2>Routes</h2>
+<div class="tw"><table>
+<tr><th>URL</th><th>Source</th><th>Notes</th></tr>
+<tr><td><code>/</code></td><td><code>pages/index.astro</code></td><td>Hero + sections in <code>site.sections</code> order</td></tr>
+<tr><td><code>/cv/</code></td><td><code>cv.astro</code></td><td>Printable; print CSS hides header/footer</td></tr>
+<tr><td><code>/404.html</code></td><td><code>404.astro</code></td><td>noindex; latest 3 posts + tags</td></tr>
+<tr><td><code>/blog/</code></td><td><code>blog/index.astro</code></td><td>Client-side tag filter</td></tr>
+<tr><td><code>/blog/{id}/</code></td><td><code>blog/[slug].astro</code></td><td>TOC, prev/next, similar posts, JSON-LD, lightbox, share</td></tr>
+<tr><td><code>/blog/tags/{tag}/</code></td><td><code>blog/tags/[tag].astro</code></td><td>Excluded from sitemap</td></tr>
+<tr><td><code>/projects/{id}/</code></td><td><code>projects/[slug].astro</code></td><td>Empty if projects section hidden</td></tr>
+<tr><td><code>/rss.xml /llms.txt /llms-full.txt /robots.txt</code></td><td>endpoints</td><td>Non-draft posts; sitemap at <code>/sitemap-index.xml</code></td></tr>
+</table></div>
+</section>
+
+<section id="components">
+<h2>Component composition</h2>
+<pre>BaseLayout (title, description, ogImage?, jsonLd?, noindex?)
+ +- slot header  -> Header      (sticky nav, details toggle, theme/accent menu, CV link)
+ +- main > slot  -> page content
+ |    on "/":  hero (inline) then for each visible site.sections[]:
+ |             componentMap[id] -> About | Skills | Experience | Projects
+ |                                 | Education | BlogPreview | Contact
+ +- slot footer  -> Footer      (build date, /blog/, /cv/, back-to-top)</pre>
+<p>All components are prop-less and self-fetching. Only <code>index.astro</code> queries a collection itself (skills, for Person JSON-LD). Section data sources: Skills (skills), Experience (experience, <code>render()</code>), Projects (projects, category chips), Education (education + certifications), BlogPreview (blog, latest 3), About (profile image via <code>import.meta.glob</code>), Contact (<code>site.contact</code>, socials).</p>
+</section>
+
+<section id="dataflow">
+<h2>Data flow</h2>
+<svg viewBox="0 0 900 300" role="img" aria-label="Data flow diagram">
+<rect class="n n1" x="10" y="20" width="130" height="50" rx="8"/><text class="b" x="75" y="42" text-anchor="middle">Content / config</text><text class="m" x="75" y="58" text-anchor="middle">md, mdx, yaml, site.ts</text>
+<rect class="n n2" x="170" y="20" width="130" height="50" rx="8"/><text class="b" x="235" y="42" text-anchor="middle">Zod collections</text><text class="m" x="235" y="58" text-anchor="middle">glob / file loaders</text>
+<rect class="n n2" x="330" y="20" width="130" height="50" rx="8"/><text class="b" x="395" y="42" text-anchor="middle">getCollection</text><text class="m" x="395" y="58" text-anchor="middle">+ render()</text>
+<rect class="n n3" x="490" y="20" width="130" height="50" rx="8"/><text class="b" x="555" y="42" text-anchor="middle">Pages / components</text><text class="m" x="555" y="58" text-anchor="middle">+ BaseLayout</text>
+<rect class="n n4" x="650" y="20" width="110" height="50" rx="8"/><text class="b" x="705" y="42" text-anchor="middle">Static HTML</text><text class="m" x="705" y="58" text-anchor="middle">dist/</text>
+<rect class="n n4" x="780" y="20" width="110" height="50" rx="8"/><text class="b" x="835" y="42" text-anchor="middle">GitHub Pages</text><text class="m" x="835" y="58" text-anchor="middle">push to main</text>
+<path class="e" d="M140 45H170" marker-end="url(#a)"/><path class="e" d="M300 45H330" marker-end="url(#a)"/><path class="e" d="M460 45H490" marker-end="url(#a)"/><path class="e" d="M620 45H650" marker-end="url(#a)"/><path class="e" d="M760 45H780" marker-end="url(#a)"/>
+<path class="e" d="M75 70V110H555V70" marker-end="url(#a)"/><text class="m" x="315" y="105" text-anchor="middle">site.ts imported directly (no query)</text>
+<rect class="n n1" x="490" y="150" width="130" height="44" rx="8"/><text class="b" x="555" y="176" text-anchor="middle">src/assets images</text>
+<path class="e" d="M555 150V70" marker-end="url(#a)"/><text class="m" x="640" y="135">astro:assets Image</text>
+<rect class="n n3" x="490" y="230" width="130" height="44" rx="8"/><text class="b" x="555" y="256" text-anchor="middle">Browser scripts</text>
+<rect class="n n4" x="680" y="215" width="130" height="34" rx="8"/><text class="b" x="745" y="237" text-anchor="middle">Formspree (POST)</text>
+<rect class="n n4" x="680" y="258" width="130" height="34" rx="8"/><text class="b" x="745" y="280" text-anchor="middle">Cloudflare beacon</text>
+<path class="e d" d="M620 244H650V232H680" marker-end="url(#a)"/><path class="e d" d="M620 252H650V275H680" marker-end="url(#a)"/>
+<path class="e d" d="M705 70V200H555V230" marker-end="url(#a)"/>
+<text class="m" x="170" y="210">Externals are contacted only from the browser,</text><text class="m" x="170" y="225">allowed by the CSP meta tag in astro.config.mjs.</text>
+</svg>
+<p>Slugs come from the file name (<code>entry.id</code>). Blog pages add <code>readingTime</code>, <code>similarPosts</code> (Jaccard on tags) and BlogPosting/Breadcrumb JSON-LD. Drafts: shown in dev, hidden in prod on blog pages and preview; RSS, 404 and llms endpoints always hide them.</p>
+</section>
+
+<section id="schemas">
+<h2>Content schemas</h2>
+<p>Enums: <code>tint</code> = crimson | cobalt | emerald | amber; skill <code>level</code> = daily | comfortable | learning; months match <code>^\d{4}-\d{2}</code>.</p>
+<div class="tw"><table>
+<tr><th>Collection</th><th>Loader</th><th>Fields</th></tr>
+<tr><td>experience</td><td>glob <code>**/*.md</code></td><td>company, role, tint, start, end (YYYY-MM or <code>null</code>, required), location, url?, plain (max 220), highlights (max 4), stack[]</td></tr>
+<tr><td>projects</td><td>glob <code>**/*.md</code></td><td>title, tint, category, plain (max 220), stack[], image? (<code>image()</code>), repo?, live?, start, end?, featured (default false; not read anywhere)</td></tr>
+<tr><td>blog</td><td>glob <code>**/*.mdx</code> only</td><td>title, summary (max 160), date (coerced), updated?, tags[], draft (default false), cover? (<code>image()</code>)</td></tr>
+<tr><td>education</td><td>file yaml</td><td>id, degree, school, start, end, location?, notes?</td></tr>
+<tr><td>certifications</td><td>file yaml</td><td>id, name, issuer, issued, expires?, credentialId?, url?, tint?</td></tr>
+<tr><td>skills</td><td>file yaml</td><td>id, name, tint, plain, items[] {name, level, icon?}</td></tr>
+</table></div>
+</section>
+
+<section id="styling">
+<h2>Styling and design tokens</h2>
+<p>One global <code>src/styles/tokens.css</code> (about 270 lines) imported in <code>BaseLayout</code>; components use scoped <code>&lt;style&gt;</code> and must not hardcode colour, size or spacing.</p>
+<ul>
+<li>Light: <code>--bg #f4f6f9</code>, <code>--ink #132033</code>; tints crimson <code>#c8102e</code>, cobalt <code>#1d4ed8</code>, emerald <code>#047857</code>, amber <code>#a34d06</code>; <code>--accent</code> defaults to cobalt.</li>
+<li>Dark: <code>:root[data-mode='dark']</code> plus <code>prefers-color-scheme</code> when no explicit mode. The values are duplicated in both blocks.</li>
+<li>Accent: <code>:root[data-accent=...]</code>. Per-item colour: <code>data-tint</code> exposes <code>--tint</code>.</li>
+<li>Type scale ratio 1.25 (<code>--text-sm</code> 0.8rem to <code>--text-3xl</code> 3.052rem); spacing <code>--space-1..6</code>; <code>--measure: 66ch</code>.</li>
+<li><code>public/theme-init.js</code> sets <code>data-mode</code>, <code>data-accent</code>, <code>data-details</code> from localStorage before paint.</li>
+<li>Also: print rules, reduced-motion switch, <code>@view-transition { navigation: auto }</code>.</li>
+</ul>
+</section>
+
+<section id="cicd">
+<h2>CI/CD</h2>
+<p><code>.github/workflows/deploy.yml</code> runs on push to <code>main</code>, pull requests and manual dispatch (Node 22, ubuntu-latest): <code>npm ci</code>, <code>npm run build</code>, <code>npm test</code>. Upload of <code>./dist</code> and <code>deploy-pages@v4</code> run only for pushes to <code>main</code>; PRs build and test only. Concurrency group <code>pages</code> cancels in-progress runs. No lint, e2e or Lighthouse job.</p>
+<h3>Content Security Policy (astro.config.mjs, delivered as meta)</h3>
+<p><code>default-src 'self'</code>; <code>img-src 'self' data:</code>; <code>connect-src</code> self, formspree.io, cloudflareinsights.com; <code>form-action</code> self, formspree.io; script self + static.cloudflareinsights.com (Astro hashes its own inline scripts); style self + <code>'unsafe-inline'</code> (Shiki); <code>base-uri 'self'</code>; <code>object-src 'none'</code>.</p>
+</section>
+
+<section id="recipes">
+<h2>How-to recipes</h2>
+<div class="grid">
+<div class="card"><b>New blog post</b><p>Create <code>src/content/blog/&lt;slug&gt;.mdx</code> (not <code>.md</code>) with title, summary (max 160), date, tags. Static images in <code>public/images/</code>, covers relative to the file.</p></div>
+<div class="card"><b>New project</b><p><code>src/content/projects/&lt;slug&gt;.md</code>; plain max 220; start as YYYY-MM. New category becomes a filter chip.</p></div>
+<div class="card"><b>New job</b><p><code>src/content/experience/&lt;slug&gt;.md</code>; <code>end: null</code> if current; max 4 highlights.</p></div>
+<div class="card"><b>Skills / education / certs</b><p>Append an item with a unique <code>id</code> to the YAML file.</p></div>
+<div class="card"><b>Site-wide change</b><p>Edit <code>site.ts</code>: toggle or reorder <code>sections</code>, Formspree id, socials, analytics, CV file.</p></div>
+<div class="card"><b>New homepage section</b><p>Create <code>SectionX.astro</code>, add to <code>componentMap</code> in <code>index.astro</code>, add entry to <code>site.sections</code>.</p></div>
+<div class="card"><b>New third-party origin</b><p>Add it to the CSP directives in <code>astro.config.mjs</code> or the browser blocks it.</p></div>
+<div class="card"><b>Change domain</b><p>Update <code>site.url</code>, <code>astro.config.mjs</code> <code>site</code>, and both CNAME files.</p></div>
+<div class="card"><b>Run</b><p><code>astro dev --background</code> (see <code>astro dev stop|status|logs</code>), <code>npm run build</code>, <code>npm test</code>.</p></div>
+</div>
+</section>
+
+<section id="gotchas">
+<h2>Gotchas and known issues</h2>
+<div class="card warn"><ul>
+<li><b>Domain in three places</b>: <code>site.url</code>, <code>astro.config.mjs</code> <code>site</code>, <code>public/CNAME</code> must be synced by hand (root <code>CNAME</code> is redundant).</li>
+<li><b>Header links are bare hashes</b> (<code>href="#about"</code>), so on blog, cv and project pages they do not reach home sections. Verified in source; not browser-tested.</li>
+<li><b>Dead knobs</b>: <code>featured</code> (schema and content set it, nothing reads it), <code>site.defaults</code>, <code>links</code>, <code>clientLogos</code>, <code>cv.updated</code> have no consumer; analytics <code>goatcounter</code> is typed but not implemented.</li>
+<li><b>Draft handling is uneven</b> between blog pages and RSS/404/llms endpoints (harmless in production).</li>
+<li><b>Image fields</b> use <code>image()</code>: old string paths fail the build; paths are relative to the content file.</li>
+<li><b>CSP blocks</b> external images, scripts and fonts until whitelisted; inline scripts without a hash are blocked, hence <code>theme-init.js</code> in <code>public/</code>.</li>
+<li><b>Dark palette duplicated</b> in two CSS blocks; also duplicate <code>h1, h2</code>, <code>a</code>, <code>html</code> rules in tokens.css.</li>
+<li><b>Placeholder assets</b>: <code>og-default.svg</code> shows placeholder identity (SVG OG images are poorly supported by social crawlers); seed content (Northwind Labs, DataLoom, Globex Bank) mixed with real CV history; placeholder repo URL in <code>pipeline-canary.md</code>.</li>
+</ul></div>
+</section>
+
+<section id="graphify">
+<h2>Graphify insights</h2>
+<p>Run of 2026-09-29: <b>272 nodes, 359 edges, 28 communities</b>, 54 files (85% extracted edges, 14% inferred). The report itself says the corpus (about 20.6k words) fits one context, so the graph adds limited value here.</p>
+<div class="grid">
+<div class="card"><b>God nodes</b><p><code>Site</code> (13 edges, the <code>site.ts</code> hub), <code>astro</code> (8), CV subject (8), Luxoft/DXC (8), Canary Deploy Toolkit (7), <code>readingTime()</code> (6).</p></div>
+<div class="card"><b>Bridge nodes</b><p><code>astro</code> (betweenness 0.057) links build tooling, layout, homepage and content schemas; then <code>dependencies</code>, atkinson mono font.</p></div>
+<div class="card"><b>Communities</b><p>Homepage Section Components; Lib Utilities and Blog Pages; Content Collection Schemas; Deploy, Hosting and CSP; Contact Form Evolution; Layout/Site Config (low cohesion 0.07, split candidate).</p></div>
+<div class="card"><b>Flags</b><p>One ambiguous edge: <code>site.ts</code> to placeholder text in <code>og-default.svg</code>. 115 isolated nodes (mostly package.json keys). No import cycles. <code>graphify-out/</code> is untracked.</p></div>
+</div>
+</section>
+</main>
+</div>
+</body>
+</html>

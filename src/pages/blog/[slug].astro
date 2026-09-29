@@ -208,6 +208,17 @@ const url = new URL(`/blog/${post.id}/`, site.url).toString();
     overflow-x: auto;
   }
 
+  .prose :global(figure.diagram) {
+    margin: var(--space-3) 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  .prose :global(figure.diagram svg) {
+    max-width: 100%;
+    height: auto;
+  }
+
   .prose :global(.code-block) {
     position: relative;
     margin: var(--space-2) 0;
@@ -244,6 +255,10 @@ const url = new URL(`/blog/${post.id}/`, site.url).toString();
 </style>
 
 <script>
+  import '../../scripts/renderMermaid';
+</script>
+
+<script>
   // Heading anchors: Astro already assigns slug ids to headings.
   document.querySelectorAll<HTMLHeadingElement>('.prose h2, .prose h3').forEach((heading) => {
     if (!heading.id) return;
@@ -258,7 +273,7 @@ const url = new URL(`/blog/${post.id}/`, site.url).toString();
   });
 
   // Copy button + language label on every code block.
-  document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => {
+  document.querySelectorAll<HTMLPreElement>('.prose pre:not(:has(code.language-mermaid))').forEach((pre) => {
     const wrapper = document.createElement('div');
     wrapper.className = 'code-block';
     pre.replaceWith(wrapper);

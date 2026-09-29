@@ -30,6 +30,8 @@ export default defineConfig({
     }),
   ],
   markdown: {
+    // Leave mermaid fences as plain code; src/scripts/renderMermaid.ts draws them client-side.
+    syntaxHighlight: { type: 'shiki', excludeLangs: ['mermaid'] },
     shikiConfig: {
       themes: { light: 'github-light', dark: 'github-dark' },
     },

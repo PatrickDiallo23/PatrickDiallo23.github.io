@@ -5,6 +5,8 @@ My personal website. Static, fast, free to host, and editable entirely through p
 Built with [Astro](https://astro.build), plain CSS, and small vanilla TypeScript `<script>` blocks.
 Deployed for free on GitHub Pages.
 
+Check it out at [diallofrancispatrick.com][https://diallofrancispatrick.com].
+
 ---
 
 ## Table of contents

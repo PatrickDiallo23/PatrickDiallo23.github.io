@@ -40,6 +40,7 @@ const jsonLdList = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       ? <meta name="robots" content="noindex" />
       : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />}
     <meta name="author" content={site.name} />
+    <meta name="keywords" content={[site.name, ...site.alternateNames].join(', ')} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />

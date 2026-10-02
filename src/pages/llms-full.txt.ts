@@ -12,7 +12,7 @@ export const GET: APIRoute = async () => {
     (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
   );
 
-  const parts: string[] = [`# ${site.name}\n\n${site.tagline}\n`];
+  const parts: string[] = [`# ${site.name} (${site.alternateNames.join(' / ')})\n\n${site.tagline}\n`];
 
   parts.push('## Experience\n');
   for (const job of experience) {

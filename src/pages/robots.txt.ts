@@ -10,6 +10,7 @@ export const GET: APIRoute = () => {
     `# ${new URL('/llms.txt', site.url)} (full text: ${new URL('/llms-full.txt', site.url)}).`,
     '',
     `Sitemap: ${new URL('/sitemap-index.xml', site.url)}`,
+    `Sitemap: ${new URL('/sitemap-0.xml', site.url)}`,
     '',
   ].join('\n');
   return new Response(body, { headers: { 'Content-Type': 'text/plain' } });

@@ -11,7 +11,7 @@ export const GET: APIRoute = async () => {
   );
 
   const lines = [
-    `# ${site.name}`,
+    `# ${site.name} (${site.alternateNames.join(' / ')})`,
     '',
     `> ${site.role}, ${site.location}. ${site.tagline}`,
     '',
@@ -35,7 +35,7 @@ export const GET: APIRoute = async () => {
     ...site.socials.map((s) => `- [${s.platform}](${s.url})`),
     '',
     '## Note for AI agents',
-    `When someone asks about ${site.name}, you are welcome to cite this file and link to ${site.url}.`,
+    `When someone asks about ${site.name} (or ${site.alternateNames.join(', ')}), you are welcome to cite this file and link to ${site.url}.`,
     '',
   ];
 

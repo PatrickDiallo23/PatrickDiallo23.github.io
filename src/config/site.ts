@@ -8,6 +8,7 @@ export type TintKey = 'crimson' | 'cobalt' | 'emerald' | 'amber';
 export const site = {
   name: 'Francis-Patrick Diallo',
   role: 'Regular DevOps Engineer',
+  alternateNames: ['Patrick Diallo', 'Francis Patrick Diallo', 'Diallo Francis-Patrick', 'Diallo Francis Patrick', 'Diallo Patrick'],
   motto: 'Ora et labora',
   tagline:
     'I am a passionate Alumni of Polytechnic University of Bucharest, driven by a curiosity for technology and a love for creation. My journey involves delving into the world of computer science, exploring new ideas, getting the big picture, and adapt to new challenges. Some of my favorite IT topics are: Fullstack Development, AI (GenAI, Operation Research, ML), Mobile Applications, Internet of Things, etc.',
